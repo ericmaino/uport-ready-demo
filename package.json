@@ -1,0 +1,59 @@
+{
+  "name": "ethereum-data",
+  "version": "1.0.0",
+  "description": "ethereum-data",
+  "main": "./bundle",
+  "scripts": {
+    "build": "gulp clean transpile",
+    "build-start": "npm run build && npm run start",
+    "gulp": "gulp",
+    "lint": "gulp tslint",
+    "start": "node ./bundle"
+  },
+  "author": {
+    "url": "https://www.meeteric.net",
+    "name": "Eric Maino",
+    "email": "eric.maino@microsoft.com"
+  },
+  "contributors": [
+    {
+      "url": "",
+      "name": "",
+      "email": ""
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "localize": "^0.4.7",
+    "winston": "^2.4.0",
+    "crypto": "^1.0.1",
+    "winston": "^2.4.0",
+    "web3": "^0.19.1"
+  },
+  "devDependencies": {
+    "gulp-zip": "^4.0.0",
+    "eslint": "^3.12.2",
+    "express": "^4.15.3",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-istanbul": "^1.1.1",
+    "gulp-jshint": "^2.0.4",
+    "gulp-mocha": "^3.0.1",
+    "gulp-nsp": "^2.4.2",
+    "gulp-open": "^2.0.0",
+    "gulp-sourcemaps": "^1.9.1",
+    "gulp-tslint": "^7.0.1",
+    "gulp-typescript": "^3.1.3",
+    "jshint": "^2.9.4",
+    "lodash": "^4.17.4",
+    "nodemon": "^1.11.0",
+    "path": "^0.12.7",
+    "precommit-hook": "^3.0.0",
+    "tslint": "^5.4.3",
+    "tslint-microsoft-contrib": "^4.0.0",
+    "typescript": "^2.1.4"
+  },
+  "pre-commit": [
+    "lint"
+  ]
+}

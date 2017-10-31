@@ -1,0 +1,47 @@
+
+# BOTS IGNORE
+**/.env
+**/*.d.ts
+**/*.js.map
+
+**/.DS_Store
+
+**/release/
+**/bundle.js
+!**/release/locale
+
+**/*.zip
+
+# NPM/Node
+**/node_modules/
+**/.ntvs_analysis.dat*
+**/npm-debug*
+**/*-lock.json
+
+# Istanbul
+**/coverage/
+
+# IDE
+**/.vscode/
+!**/.vscode/launch.json
+!**/.vscode/settings.json
+!**/.vscode/extensions.json
+**/.settings
+
+# Typescript
+**/typings
+**/tsd-debug.log
+
+# Generated Javascript
+**/lib/**/*.js
+**/src/**/*.js
+**/test/**/*.js
+**/bin/**/*.js
+**/out/
+
+**/testresults/
+
+**/*.cmd
+
+# config file
+src/config.dev.ts
