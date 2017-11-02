@@ -116,7 +116,6 @@
       true,
       "check-open-brace",
       "check-catch",
-      "check-else",
       "check-whitespace"
     ],
     "one-variable-per-declaration": true,

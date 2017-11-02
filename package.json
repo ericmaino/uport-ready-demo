@@ -8,7 +8,8 @@
     "build-start": "npm run build && npm run start",
     "gulp": "gulp",
     "lint": "gulp tslint",
-    "start": "node ./bundle"
+    "start": "node ./release/app.js",
+    "validate": "npm ls"
   },
   "author": {
     "url": "https://www.meeteric.net",
@@ -24,13 +25,17 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "localize": "^0.4.7",
-    "winston": "^2.4.0",
+    "applicationinsights": "^1.0.0",
     "crypto": "^1.0.1",
+    "localize": "^0.4.7",
+    "require-dir": "^0.3.2",
+    "web3": "^0.19.1",
     "winston": "^2.4.0",
-    "web3": "^0.19.1"
+    "winston-azure-application-insights": "^1.1.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.66",
+    "@types/node": "^6.0.52",
     "gulp-zip": "^4.0.0",
     "eslint": "^3.12.2",
     "express": "^4.15.3",
