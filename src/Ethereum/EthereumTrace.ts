@@ -1,6 +1,7 @@
 import { EthereumAddress } from './models/EthereumAddress';
+import { IReader } from './../interfaces/IReader';
 
-export class TraceReader {
+export class TraceReader implements IReader<EthereumAddress> {
     private readonly traceLog;
     private readonly addressSet: Map<string, EthereumAddress>;
     private index: number;
@@ -32,7 +33,7 @@ export class TraceReader {
         const lastCount = this.addressSet.size;
 
         while (lastCount === this.addressSet.size && (++this.index) < this.traceLog.length) {
-            const address = await this.ReadAddress();
+            const address = await this.Read();
 
             if (address && !this.addressSet.has(address.AsHex())) {
                 this.addressSet.set(address.AsHex(), address);
@@ -42,7 +43,7 @@ export class TraceReader {
         return this.addressSet.size > lastCount;
     }
 
-    public async ReadAddress(): Promise<EthereumAddress> {
+    public async Read(): Promise<EthereumAddress> {
         return new Promise<EthereumAddress>(resolve => resolve(TraceReader.ExtractAddressesFromTrace(this.traceLog[this.index])));
     }
 }

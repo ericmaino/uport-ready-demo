@@ -1,5 +1,6 @@
 import { EthereumAddress } from './EthereumAddress';
 import { EthereumTx } from './EthereumTx';
+import winston = require('winston');
 
 export class EthereumBlock {
     private readonly content;

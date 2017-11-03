@@ -1,5 +1,6 @@
 import winston = require('winston');
-import { IEthereum, IReader } from './IEthereum';
+import { IEthereumClient } from './IEthereumClient';
+import { IReader } from './../interfaces/IReader';
 import { EthereumBlock, EthereumBlockDetail } from './models/EthereumBlock';
 import { EthereumTx } from './models/EthereumTx';
 import { EthereumCode } from './models/EthereumCode';
@@ -7,12 +8,12 @@ import { EthereumAddress } from './models/EthereumAddress';
 import { TraceReader } from './EthereumTrace';
 
 export class BlockReader {
-    private eth: IEthereum;
+    private eth: IEthereumClient;
     private currentBlock;
     private nextBlock: number;
     private latestBlock: number;
 
-    constructor(eth: IEthereum, startingBlock: number) {
+    constructor(eth: IEthereumClient, startingBlock: number) {
         this.eth = eth;
         this.nextBlock = startingBlock;
     }
@@ -38,17 +39,16 @@ export class BlockReader {
 
     public async ReadBlock(): Promise<EthereumBlock> {
         winston.debug(`Reading Block ${this.currentBlock}`);
-        const content = await this.eth.GetBlockFromNumber(this.currentBlock);
-        return new EthereumBlock(content);
+        return await this.eth.GetBlockFromNumber(this.currentBlock);
     }
 }
 
 export class TxReader {
-    private eth: IEthereum;
+    private eth: IEthereumClient;
     private readonly block: EthereumBlock;
     private index: number;
 
-    constructor(eth: IEthereum, block: EthereumBlock) {
+    constructor(eth: IEthereumClient, block: EthereumBlock) {
         this.eth = eth;
         this.block = block;
         this.index = -1;
@@ -82,10 +82,10 @@ class MapHelper {
 }
 
 export class BlockDetailReader {
-    private eth: IEthereum;
+    private eth: IEthereumClient;
     private readonly blockReader: BlockReader;
 
-    constructor(eth: IEthereum, startingBlock: number) {
+    constructor(eth: IEthereumClient, startingBlock: number) {
         this.eth = eth;
         this.blockReader = new BlockReader(eth, startingBlock);
     }
@@ -121,12 +121,12 @@ export class BlockDetailReader {
 }
 
 export class BlockTxReader {
-    private eth: IEthereum;
+    private eth: IEthereumClient;
     private readonly blockReader: BlockReader;
     private txReader: TxReader;
     private tx: EthereumTx;
 
-    constructor(eth: IEthereum, startingBlock: number) {
+    constructor(eth: IEthereumClient, startingBlock: number) {
         this.eth = eth;
         this.blockReader = new BlockReader(eth, startingBlock);
     }
@@ -156,18 +156,18 @@ export class BlockTxReader {
 }
 
 class Trace {
-    public static async ConstructReader(eth: IEthereum, tx: EthereumTx): Promise<IReader<EthereumAddress>> {
+    public static async ConstructReader(eth: IEthereumClient, tx: EthereumTx): Promise<IReader<EthereumAddress>> {
         return await eth.GetTrace(tx);
     }
 }
 
 export class BlockAddressReader {
-    private eth: IEthereum;
+    private eth: IEthereumClient;
     private readonly blockTxReader: BlockTxReader;
     private traceReader: IReader<EthereumAddress>;
     private address: EthereumAddress;
 
-    constructor(eth: IEthereum, startingBlock: number) {
+    constructor(eth: IEthereumClient, startingBlock: number) {
         this.eth = eth;
         this.blockTxReader = new BlockTxReader(eth, startingBlock);
     }
@@ -198,9 +198,9 @@ export class BlockAddressReader {
 }
 
 export class CodeReader {
-    private eth: IEthereum;
+    private eth: IEthereumClient;
 
-    constructor(eth: IEthereum) {
+    constructor(eth: IEthereumClient) {
         this.eth = eth;
     }
 
@@ -210,14 +210,14 @@ export class CodeReader {
 }
 
 // export class AddressReader {
-//     private eth: IEthereum;
+//     private eth: IEthereumClient;
 //     private readonly blockReader: BlockReader;
 //     private txReader: TxReader;
 //     private incrementBlock: boolean;
 //     private index: number;
 //     private currentAddress: EthereumAddress;
 
-//     constructor(eth: IEthereum, startingBlock: number) {
+//     constructor(eth: IEthereumClient, startingBlock: number) {
 //         this.eth = eth;
 //         this.blockReader = new BlockReader(this.eth, startingBlock);
 //         this.incrementBlock = true;
