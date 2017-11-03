@@ -26,8 +26,6 @@ export class TraceReader implements IReader<EthereumAddress> {
                 }
                 address = EthereumAddress.Parse(possibleAddress);
             }
-
-            winston.debug(`${trace.op} - ${possibleAddress}`);
         }
 
         return address;

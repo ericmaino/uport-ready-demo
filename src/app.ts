@@ -37,5 +37,5 @@ class EthereumData {
 }
 
 LoggingConfiguration.initialize(null);
-new EthereumData().filterFromBlock(2200)
+new EthereumData().filterFromBlock(2235)
     .catch(err => winston.error(err));
