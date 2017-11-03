@@ -47,7 +47,7 @@ export class EthereumWeb3Client implements IEthereumClient {
 
     public async GetCode(address: EthereumAddress): Promise<EthereumCode> {
         const code = await this.queue.ExecuteJob(() => new Promise((resolve, reject) => {
-            this.web3.eth.getCode(address, (error, result) => {
+            this.web3.eth.getCode(address.AsHex(), (error, result) => {
                 if (error) {
                     reject(error);
                 }

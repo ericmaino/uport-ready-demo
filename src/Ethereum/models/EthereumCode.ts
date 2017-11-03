@@ -10,4 +10,12 @@ export class EthereumCode {
         this.hash = sha3.digest('hex');
         this.code = code;
     }
+
+    public Code() : string {
+        return this.code;
+    }
+
+    public Hash() : string {
+        return this.hash;
+    }
 }

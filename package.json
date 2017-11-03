@@ -27,7 +27,9 @@
   "dependencies": {
     "applicationinsights": "^1.0.0",
     "crypto": "^1.0.1",
+    "fs": "0.0.1-security",
     "localize": "^0.4.7",
+    "path": "^0.12.7",
     "require-dir": "^0.3.2",
     "web3": "^0.19.1",
     "winston": "^2.4.0",

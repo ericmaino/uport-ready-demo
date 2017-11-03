@@ -31,4 +31,8 @@ export class EthereumTx {
     public Hash(): string {
         return this.tx.hash;
     }
+
+    public AsSerializable() : string {
+        return JSON.stringify({tx: this.tx, receipt: this.receipt});
+    }
 }

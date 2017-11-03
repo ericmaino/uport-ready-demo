@@ -20,13 +20,17 @@ export class EthereumBlock {
     public BlockNumber(): number {
         return this.content.number;
     }
+
+    public AsSerializable(): string {
+        return JSON.stringify(this.content);
+    }
 }
 
 export class EthereumBlockDetail {
     //private block: EthereumBlock;
     private blockNumber: number;
     private txs: Array<EthereumTx>;
-    private addresses: Array<EthereumAddress>;
+    public addresses: Array<EthereumAddress>;
 
     constructor(block: EthereumBlock, txs: Array<EthereumTx>, addresses: Array<EthereumAddress>) {
         this.blockNumber = block.BlockNumber();
