@@ -30,7 +30,9 @@ class EthereumData {
             let index = -1;
 
             while ((++index) < data.addresses.length) {
-                await codeReader.ExtractCode(data.addresses[index]);
+                const address = data.addresses[index];
+                await codeReader.ExtractCode(address);
+                await this.eth.GetData(address);
             }
         }
     }

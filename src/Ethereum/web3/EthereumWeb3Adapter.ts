@@ -33,6 +33,10 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
         return traceLog.structLogs;
     }
 
+    public async GetAbi(address: string): Promise<any> {
+        return new Promise((resolve, reject) => reject('Not Supported'));
+    }
+
     public async GetCode(address: string): Promise<any> {
         const code = await this.queue.ExecuteJob(() => new Promise((resolve, reject) => {
             this.web3.eth.getCode(address, (error, result) => {
@@ -48,7 +52,7 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
         return code;
     }
 
-    public async GetBlock(identifer: string) : Promise<any> {
+    public async GetBlock(identifer: string): Promise<any> {
         return await this.queue.ExecuteJob(() =>
             new Promise((resolve, reject) => {
                 this.web3.eth.getBlock(identifer, (error, block) => {
@@ -61,7 +65,7 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
             }));
     }
 
-    public async GetTransactionReceipt(txHash: string) : Promise<any> {
+    public async GetTransactionReceipt(txHash: string): Promise<any> {
         return await this.queue.ExecuteJob(() => new Promise((resolve, reject) => {
             this.web3.eth.getTransactionReceipt(txHash, (err, result) => {
                 if (err) {
@@ -73,7 +77,7 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
         }));
     }
 
-    public async GetTransaction(txHash: string) : Promise<any> {
+    public async GetTransaction(txHash: string): Promise<any> {
         return await this.queue.ExecuteJob(async () => new Promise((resolve, reject) => {
             this.web3.eth.getTransaction(txHash, (err, result) => {
                 if (err) {

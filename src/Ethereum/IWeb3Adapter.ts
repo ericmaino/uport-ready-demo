@@ -4,4 +4,5 @@ export interface IWeb3Adapter {
     GetTransactionReceipt(txHash: string): Promise<any>;
     GetTrace(txHash: string): Promise<any>;
     GetBlock(identitifer: any): Promise<any>;
+    GetAbi(address: string) : Promise<any>;
 }

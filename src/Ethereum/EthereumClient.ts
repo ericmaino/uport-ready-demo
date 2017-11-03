@@ -43,4 +43,10 @@ export class EthereumClient implements IEthereumClient {
         const code = await this.baseClient.GetCode(address.AsHex());
         return new EthereumCode(code);
     }
+
+    public async GetData(address: EthereumAddress): Promise<any> {
+        const abi = await this.baseClient.GetAbi(address.AsHex());
+        winston.warn(abi);
+        return null;
+    }
 }

@@ -43,6 +43,41 @@ export class EthereumWeb3AdapterFileSystemCache implements IWeb3Adapter {
         return code;
     }
 
+    public async GetAbi(address: string): Promise<any> {
+        const abiPath = this.GetPath(`Addresses/${address}/abi.json`);
+        let abi: any = null;
+
+        if (await this.Exists(abiPath)) {
+            const buffer = await this.ReadFile(abiPath);
+            abi = JSON.parse(buffer);
+        }
+
+        return abi;
+    }
+
+    private GetPath(itemPath: string): string {
+        return path.join(this.dataRoot, itemPath);
+    }
+
+    private async ReadFile(itemPath: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            fs.readFile(itemPath, (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(data);
+            });
+        });
+    }
+
+    private async Exists(itemPath: string): Promise<boolean> {
+        return new Promise<boolean>(resolve => {
+            fs.exists(itemPath, (exists) => {
+                resolve(exists);
+            });
+        });
+    }
+
     private EnsureDirectoryExists(filePath: string) {
         const split = filePath.split(path.sep);
         split.slice(0, -1).reduce((prev, curr, i) => {
