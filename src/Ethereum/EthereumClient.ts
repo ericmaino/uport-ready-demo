@@ -2,18 +2,19 @@ import winston = require('winston');
 import fs = require('fs');
 import path = require('path');
 
-import { IEthereumClient, IEthereumAdapter } from './IEthereumClient';
+import { IEthereumClient } from './IEthereumClient';
+import { IWeb3Adapter } from './IWeb3Adapter';
 import { EthereumBlock, EthereumBlockDetail } from './models/EthereumBlock';
 import { EthereumTx } from './models/EthereumTx';
 import { EthereumCode } from './models/EthereumCode';
 import { EthereumAddress } from './models/EthereumAddress';
 import { IReader } from './../interfaces/IReader';
-import { TraceReader } from './EthereumTrace';
+import { TraceReader } from './readers/TraceReader';
 
 export class EthereumClient implements IEthereumClient {
-    private readonly baseClient: IEthereumAdapter;
+    private readonly baseClient: IWeb3Adapter;
 
-    constructor(baseClient: IEthereumAdapter) {
+    constructor(baseClient: IWeb3Adapter) {
         this.baseClient = baseClient;
     }
 

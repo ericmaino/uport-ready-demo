@@ -11,11 +11,3 @@ export interface IEthereumClient {
     GetTrace(tx: EthereumTx): Promise<IReader<EthereumAddress>>;
     GetCode(address: EthereumAddress): Promise<EthereumCode>;
 }
-
-export interface IEthereumAdapter {
-    GetCode(address: string): Promise<any>;
-    GetTransaction(txHash: string): Promise<any>;
-    GetTransactionReceipt(txHash: string): Promise<any>;
-    GetTrace(txHash: string): Promise<any>;
-    GetBlock(identitifer: any): Promise<any>;
-}

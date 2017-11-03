@@ -1,12 +1,14 @@
 import winston = require('winston');
 
-import { EthereumWeb3Client } from './Ethereum/EthereumWeb3Client';
-import { EthereumFileSystemCacheClientDecorator } from './Ethereum/EthereumFileSystemCacheClientDecorator';
+import { EthereumWeb3Adapter } from './Ethereum/web3/EthereumWeb3Adapter';
+import { EthereumWeb3AdapterFileSystemCache } from './Ethereum/web3/EthereumWeb3AdapterFileSystemCache';
 import { EthereumClient } from './Ethereum/EthereumClient';
 import { IEthereumClient } from './Ethereum/IEthereumClient';
 import { LoggingConfiguration } from './modules/LoggingConfiguration';
-import { TraceReader } from './Ethereum/EthereumTrace';
-import { BlockAddressReader, BlockDetailReader, CodeReader } from './Ethereum/Readers';
+import { TraceReader } from './Ethereum/readers/TraceReader';
+import { BlockAddressReader } from './Ethereum/readers/BlockAddressReader';
+import { BlockDetailReader } from './Ethereum/readers/BlockDetailReader';
+import { CodeReader } from './Ethereum/readers/CodeReader';
 
 import util = require('util');
 
@@ -15,8 +17,8 @@ class EthereumData {
     private readonly eth: IEthereumClient;
 
     constructor() {
-        const web3Client = new EthereumWeb3Client("http://localhost:8545");
-        const fsCache = new EthereumFileSystemCacheClientDecorator(web3Client, "d:/chaindata");
+        const web3Client = new EthereumWeb3Adapter("http://localhost:8545");
+        const fsCache = new EthereumWeb3AdapterFileSystemCache(web3Client, "d:/chaindata");
         this.eth = new EthereumClient(fsCache);
     }
     public async filterFromBlock(blockNumber) {

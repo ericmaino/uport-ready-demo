@@ -1,10 +1,10 @@
 import Web3 = require('web3');
 import net = require('net');
 import winston = require('winston');
-import { JobQueue } from './../modules/JobQueue';
-import { IEthereumAdapter } from './IEthereumClient';
+import { JobQueue } from './../../modules/JobQueue';
+import { IWeb3Adapter } from './../IWeb3Adapter';
 
-export class EthereumWeb3Client implements IEthereumAdapter {
+export class EthereumWeb3Adapter implements IWeb3Adapter {
     private readonly web3: Web3;
     private readonly queue: JobQueue;
 

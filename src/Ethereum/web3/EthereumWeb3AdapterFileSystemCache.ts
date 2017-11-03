@@ -2,13 +2,13 @@ import winston = require('winston');
 import fs = require('fs');
 import path = require('path');
 
-import { IEthereumAdapter } from './IEthereumClient';
+import { IWeb3Adapter } from './../IWeb3Adapter';
 
-export class EthereumFileSystemCacheClientDecorator implements IEthereumAdapter {
-    private readonly baseClient: IEthereumAdapter;
+export class EthereumWeb3AdapterFileSystemCache implements IWeb3Adapter {
+    private readonly baseClient: IWeb3Adapter;
     private readonly dataRoot: string;
 
-    constructor(baseClient: IEthereumAdapter, dataRoot: string) {
+    constructor(baseClient: IWeb3Adapter, dataRoot: string) {
         this.baseClient = baseClient;
         this.dataRoot = dataRoot;
     }

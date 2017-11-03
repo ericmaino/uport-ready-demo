@@ -1,6 +1,6 @@
 import winston = require('winston');
-import { EthereumAddress } from './models/EthereumAddress';
-import { IReader } from './../interfaces/IReader';
+import { EthereumAddress } from './../models/EthereumAddress';
+import { IReader } from './../../interfaces/IReader';
 
 export class TraceReader implements IReader<EthereumAddress> {
     private readonly traceLog;
