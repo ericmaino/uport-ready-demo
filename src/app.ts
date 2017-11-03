@@ -1,7 +1,8 @@
 import winston = require('winston');
 
 import { EthereumWeb3Client } from './Ethereum/EthereumWeb3Client';
-import { EthereumFileSystemDecoratorClient } from './Ethereum/EthereumFileSystemDecorator';
+import { EthereumFileSystemCacheClientDecorator } from './Ethereum/EthereumFileSystemCacheClientDecorator';
+import { EthereumClient } from './Ethereum/EthereumClient';
 import { IEthereumClient } from './Ethereum/IEthereumClient';
 import { LoggingConfiguration } from './modules/LoggingConfiguration';
 import { TraceReader } from './Ethereum/EthereumTrace';
@@ -15,7 +16,8 @@ class EthereumData {
 
     constructor() {
         const web3Client = new EthereumWeb3Client("http://localhost:8545");
-        this.eth = new EthereumFileSystemDecoratorClient(web3Client, "d:/chaindata");
+        const fsCache = new EthereumFileSystemCacheClientDecorator(web3Client, "d:/chaindata");
+        this.eth = new EthereumClient(fsCache);
     }
     public async filterFromBlock(blockNumber) {
         const reader = new BlockDetailReader(this.eth, blockNumber);
@@ -33,5 +35,5 @@ class EthereumData {
 }
 
 LoggingConfiguration.initialize(null);
-new EthereumData().filterFromBlock(174535)
+new EthereumData().filterFromBlock(2200)
     .catch(err => winston.error(err));

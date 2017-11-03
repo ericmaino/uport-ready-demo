@@ -5,9 +5,9 @@ export class EthereumTx {
     private readonly tx;
     private readonly receipt;
 
-    constructor(txAndReceipt) {
-        this.tx = txAndReceipt.tx;
-        this.receipt = txAndReceipt.receipt;
+    constructor(tx: any, receipt: any) {
+        this.tx = tx;
+        this.receipt = receipt;
     }
 
     public TargetAddress(): EthereumAddress {

@@ -2,15 +2,9 @@ import Web3 = require('web3');
 import net = require('net');
 import winston = require('winston');
 import { JobQueue } from './../modules/JobQueue';
-import { IEthereumClient } from './IEthereumClient';
-import { EthereumBlock, EthereumBlockDetail } from './models/EthereumBlock';
-import { EthereumTx } from './models/EthereumTx';
-import { EthereumCode } from './models/EthereumCode';
-import { EthereumAddress } from './models/EthereumAddress';
-import { IReader } from './../interfaces/IReader';
-import { TraceReader } from './EthereumTrace';
+import { IEthereumAdapter } from './IEthereumClient';
 
-export class EthereumWeb3Client implements IEthereumClient {
+export class EthereumWeb3Client implements IEthereumAdapter {
     private readonly web3: Web3;
     private readonly queue: JobQueue;
 
@@ -19,13 +13,13 @@ export class EthereumWeb3Client implements IEthereumClient {
         this.queue = new JobQueue();
     }
 
-    public async GetTrace(tx: EthereumTx): Promise<IReader<EthereumAddress>> {
+    public async GetTrace(txHash: string): Promise<any> {
 
         const traceLog = await this.queue.ExecuteJob(() => new Promise((resolve, reject) => {
             this.web3.currentProvider.sendAsync({
                 jsonrpc: "2.0",
                 method: "debug_traceTransaction",
-                params: [tx.Hash()],
+                params: [txHash],
                 id: new Date().getTime()
             }, function (err, result) {
                 if (err) {
@@ -36,18 +30,12 @@ export class EthereumWeb3Client implements IEthereumClient {
             });
         }));
 
-        return new TraceReader(traceLog.structLogs);
+        return traceLog.structLogs;
     }
 
-    public async GetTransaction(txHash: string): Promise<EthereumTx> {
-        const tx = await this.GetTransactionData(txHash);
-        const receipt = await this.GetTransactionReceipt(txHash);
-        return new EthereumTx({ tx: tx, receipt: receipt });
-    }
-
-    public async GetCode(address: EthereumAddress): Promise<EthereumCode> {
+    public async GetCode(address: string): Promise<any> {
         const code = await this.queue.ExecuteJob(() => new Promise((resolve, reject) => {
-            this.web3.eth.getCode(address.AsHex(), (error, result) => {
+            this.web3.eth.getCode(address, (error, result) => {
                 if (error) {
                     reject(error);
                 }
@@ -57,23 +45,13 @@ export class EthereumWeb3Client implements IEthereumClient {
             });
         }));
 
-        return new EthereumCode(code);
+        return code;
     }
 
-    public async GetBlockFromNumber(blockNumber: number): Promise<EthereumBlock> {
-        const block = await this.GetBlockFromIdentifer(blockNumber);
-        return new EthereumBlock(block);
-    }
-
-    public async GetLatestBlockNumber(): Promise<number> {
-        const latestBlock = await this.GetBlockFromIdentifer('latest');
-        return latestBlock.number;
-    }
-
-    private GetBlockFromIdentifer(blockHashNumberOrLabel) {
-        return this.queue.ExecuteJob(() =>
+    public async GetBlock(identifer: string) : Promise<any> {
+        return await this.queue.ExecuteJob(() =>
             new Promise((resolve, reject) => {
-                this.web3.eth.getBlock(blockHashNumberOrLabel, (error, block) => {
+                this.web3.eth.getBlock(identifer, (error, block) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -83,8 +61,8 @@ export class EthereumWeb3Client implements IEthereumClient {
             }));
     }
 
-    private GetTransactionReceipt(txHash) {
-        return this.queue.ExecuteJob(() => new Promise((resolve, reject) => {
+    public async GetTransactionReceipt(txHash: string) : Promise<any> {
+        return await this.queue.ExecuteJob(() => new Promise((resolve, reject) => {
             this.web3.eth.getTransactionReceipt(txHash, (err, result) => {
                 if (err) {
                     reject(err);
@@ -95,7 +73,7 @@ export class EthereumWeb3Client implements IEthereumClient {
         }));
     }
 
-    private async GetTransactionData(txHash) {
+    public async GetTransaction(txHash: string) : Promise<any> {
         return await this.queue.ExecuteJob(async () => new Promise((resolve, reject) => {
             this.web3.eth.getTransaction(txHash, (err, result) => {
                 if (err) {

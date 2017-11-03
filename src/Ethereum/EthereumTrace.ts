@@ -1,3 +1,4 @@
+import winston = require('winston');
 import { EthereumAddress } from './models/EthereumAddress';
 import { IReader } from './../interfaces/IReader';
 
@@ -5,6 +6,7 @@ export class TraceReader implements IReader<EthereumAddress> {
     private readonly traceLog;
     private readonly addressSet: Map<string, EthereumAddress>;
     private index: number;
+    private currentAddress: EthereumAddress;
 
     constructor(traceLog) {
         this.traceLog = traceLog;
@@ -24,6 +26,8 @@ export class TraceReader implements IReader<EthereumAddress> {
                 }
                 address = EthereumAddress.Parse(possibleAddress);
             }
+
+            winston.debug(`${trace.op} - ${possibleAddress}`);
         }
 
         return address;
@@ -31,12 +35,14 @@ export class TraceReader implements IReader<EthereumAddress> {
 
     public async MoveNext(): Promise<boolean> {
         const lastCount = this.addressSet.size;
+        this.currentAddress = null;
 
         while (lastCount === this.addressSet.size && (++this.index) < this.traceLog.length) {
-            const address = await this.Read();
+            const address = TraceReader.ExtractAddressesFromTrace(this.traceLog[this.index]);
 
             if (address && !this.addressSet.has(address.AsHex())) {
                 this.addressSet.set(address.AsHex(), address);
+                this.currentAddress = address;
             }
         }
 
@@ -44,6 +50,6 @@ export class TraceReader implements IReader<EthereumAddress> {
     }
 
     public async Read(): Promise<EthereumAddress> {
-        return new Promise<EthereumAddress>(resolve => resolve(TraceReader.ExtractAddressesFromTrace(this.traceLog[this.index])));
+        return new Promise<EthereumAddress>(resolve => resolve(this.currentAddress));
     }
 }
