@@ -1,16 +1,18 @@
 import winston = require('winston');
 import { IEthereumClient } from './../IEthereumClient';
+import { IBlockTracker } from './../../interfaces/IBlockTracker';
 import { EthereumBlock } from './../models/EthereumBlock';
 
 export class BlockReader {
-    private eth: IEthereumClient;
-    private currentBlock;
+    private readonly eth: IEthereumClient;
+    private readonly blockTracker: IBlockTracker;
+    private currentBlock: number;
     private nextBlock: number;
     private latestBlock: number;
 
-    constructor(eth: IEthereumClient, startingBlock: number) {
+    constructor(eth: IEthereumClient, blockTracker: IBlockTracker) {
         this.eth = eth;
-        this.nextBlock = startingBlock;
+        this.blockTracker = blockTracker;
     }
 
     public async MoveNext(): Promise<boolean> {
@@ -21,6 +23,10 @@ export class BlockReader {
         }
         else if (this.nextBlock === this.latestBlock) {
             this.latestBlock = await this.eth.GetLatestBlockNumber();
+        }
+
+        if (!this.nextBlock) {
+            this.nextBlock = await this.blockTracker.NextBlock();
         }
 
         if (this.nextBlock < this.latestBlock) {

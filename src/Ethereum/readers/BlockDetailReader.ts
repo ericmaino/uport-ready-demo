@@ -1,6 +1,7 @@
 import winston = require('winston');
 import { IEthereumClient } from './../IEthereumClient';
 import { IReader } from './../../interfaces/IReader';
+import { IBlockTracker } from './../../interfaces/IBlockTracker';
 import { EthereumBlockDetail } from './../models/EthereumBlock';
 import { EthereumTx } from './../models/EthereumTx';
 import { EthereumAddress } from './../models/EthereumAddress';
@@ -11,9 +12,9 @@ export class BlockDetailReader {
     private eth: IEthereumClient;
     private readonly blockReader: BlockReader;
 
-    constructor(eth: IEthereumClient, startingBlock: number) {
+    constructor(eth: IEthereumClient, blockTracker: IBlockTracker) {
         this.eth = eth;
-        this.blockReader = new BlockReader(eth, startingBlock);
+        this.blockReader = new BlockReader(eth, blockTracker);
     }
 
     public async MoveNext(): Promise<boolean> {
