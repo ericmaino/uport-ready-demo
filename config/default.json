@@ -2,7 +2,13 @@
     "logging" : {
         "ai" : ""
     },
+    "storage" :{
+        "root" : "chain-data",
+        "azure" : {
+            "account" : "",
+            "key" : ""
+        }
+    },
     "rpcUrl" : "http://localhost:8545",
-    "cacheRoot" : "d:/chaindata",
     "startingBlock" : "7200"
 }

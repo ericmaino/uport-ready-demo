@@ -6,10 +6,17 @@ import { IStorage } from './../interfaces/IStorage';
 
 export class FileSystemStorage implements IStorage {
     private readonly dataRoot: string;
+    private readonly identifier: string;
 
     constructor(dataRoot: string) {
         this.dataRoot = dataRoot;
+        this.identifier = `Local File System '${dataRoot}'`;
     }
+
+    public Identifier() : string {
+        return this.identifier;
+    }
+
     public async ReadItem(itemPath: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             fs.readFile(this.GetPath(itemPath), (err, data) => {
@@ -62,6 +69,4 @@ export class FileSystemStorage implements IStorage {
             return dir;
         });
     }
-
-
 }
