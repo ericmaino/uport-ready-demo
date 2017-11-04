@@ -16,12 +16,13 @@ import util = require('util');
 class EthereumData {
     private readonly eth: IEthereumClient;
 
-    constructor() {
-        const web3Client = new EthereumWeb3Adapter("http://localhost:8545");
-        const fsCache = new EthereumWeb3AdapterFileSystemCache(web3Client, "d:/chaindata");
+    constructor(rpcUrl : string, storageRoot: string) {
+        const web3Client = new EthereumWeb3Adapter(rpcUrl);
+        const fsCache = new EthereumWeb3AdapterFileSystemCache(web3Client, storageRoot);
         this.eth = new EthereumClient(fsCache);
     }
-    public async filterFromBlock(blockNumber) {
+
+    public async filterFromBlock(blockNumber: number) {
         const reader = new BlockDetailReader(this.eth, blockNumber);
         const codeReader = new CodeReader(this.eth);
 
@@ -40,5 +41,5 @@ class EthereumData {
 }
 
 LoggingConfiguration.initialize(null);
-new EthereumData().filterFromBlock(2235)
+new EthereumData("http://localhost:8545", "d:/chaindata").filterFromBlock(2235)
     .catch(err => winston.error(err));
