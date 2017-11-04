@@ -44,4 +44,4 @@
 **/*.cmd
 
 # config file
-src/config.dev.ts
+config/local.json
