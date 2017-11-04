@@ -27,7 +27,7 @@ export class TraceReader implements IReader<EthereumAddress> {
                 address = EthereumAddress.Parse(possibleAddress);
             }
         } else if (trace.op === "SSTORE") {
-            for (const key of trace.storage) {
+            for (const key in trace.storage) {
                 address = EthereumAddress.Parse(trace.storage[key]);
                 break;
             }
