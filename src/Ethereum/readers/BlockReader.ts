@@ -33,7 +33,10 @@ export class BlockReader {
     }
 
     public async ReadBlock(): Promise<EthereumBlock> {
-        winston.debug(`Reading Block ${this.currentBlock}`);
+        if ((this.currentBlock % 10) === 0) {
+            winston.debug(`Reading Block ${this.currentBlock}`);
+        }
+
         return await this.eth.GetBlockFromNumber(this.currentBlock);
     }
 }
