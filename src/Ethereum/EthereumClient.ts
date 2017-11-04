@@ -44,12 +44,12 @@ export class EthereumClient implements IEthereumClient {
         return new EthereumCode(code);
     }
 
-    public async GetData(address: EthereumAddress): Promise<any> {
+    public async GetData(address: EthereumAddress, block: EthereumBlock): Promise<any> {
         const abi = await this.baseClient.GetAbi(address.AsHex());
         let data = null;
 
         if (abi) {
-            data = await this.baseClient.ReadContract(address.AsHex(), abi, null);
+            data = await this.baseClient.ReadContract(address.AsHex(), abi, block.BlockNumber());
         }
 
         return data;

@@ -10,5 +10,5 @@ export interface IEthereumClient {
     GetTransaction(txHash: string): Promise<EthereumTx>;
     GetTrace(tx: EthereumTx): Promise<IReader<EthereumAddress>>;
     GetCode(address: EthereumAddress): Promise<EthereumCode>;
-    GetData(address: EthereumAddress) : Promise<any>;
+    GetData(address: EthereumAddress, block: EthereumBlock) : Promise<any>;
 }

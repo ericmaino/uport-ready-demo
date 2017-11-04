@@ -53,13 +53,17 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
     }
 
     public async ReadContract(address: string, abi: any, block?: any): Promise<any> {
+        if (!block) {
+            block = 'latest';
+        }
+
         return await this.queue.ExecuteJob(() => new Promise((resolve, reject) => {
             const contract = this.web3.eth.contract(abi).at(address);
             const contractData = {};
 
             abi.forEach(x => {
                 if (x.constant && x.inputs.length === 0) {
-                    const value = contract[x.name]();
+                    const value = contract[x.name](block);
 
                     if (x.outputs[0].type === 'uint256') {
                         contractData[x.name] = value.toNumber();

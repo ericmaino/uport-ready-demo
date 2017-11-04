@@ -27,14 +27,17 @@ export class EthereumBlock {
 }
 
 export class EthereumBlockDetail {
-    //private block: EthereumBlock;
-    private blockNumber: number;
+    private block: EthereumBlock;
     private txs: Array<EthereumTx>;
     public addresses: Array<EthereumAddress>;
 
     constructor(block: EthereumBlock, txs: Array<EthereumTx>, addresses: Array<EthereumAddress>) {
-        this.blockNumber = block.BlockNumber();
+        this.block = block;
         this.txs = txs;
         this.addresses = addresses;
+    }
+
+    public Block() : EthereumBlock {
+        return this.block;
     }
 }
