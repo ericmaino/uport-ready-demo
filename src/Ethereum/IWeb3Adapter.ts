@@ -5,4 +5,5 @@ export interface IWeb3Adapter {
     GetTrace(txHash: string): Promise<any>;
     GetBlock(identitifer: any): Promise<any>;
     GetAbi(address: string) : Promise<any>;
+    ReadContract(address: string, abi: any, block: any) : Promise<any>;
 }

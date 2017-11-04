@@ -55,6 +55,10 @@ export class EthereumWeb3AdapterFileSystemCache implements IWeb3Adapter {
         return abi;
     }
 
+    public ReadContract(address: string, abi: any, block?: any) : Promise<any> {
+        return this.baseClient.ReadContract(address, abi, block);
+    }
+
     private GetPath(itemPath: string): string {
         return path.join(this.dataRoot, itemPath);
     }
