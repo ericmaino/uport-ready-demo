@@ -17,11 +17,11 @@ import util = require('util');
 class EthereumData {
     private readonly eth: IEthereumClient;
 
-    constructor(rpcUrl : string, storageRoot: string) {
+    constructor(rpcUrl: string, storageRoot: string) {
         const fsStorage = new FileSystemStorage(storageRoot);
         const web3Client = new EthereumWeb3Adapter(rpcUrl);
         const fsCache = new EthereumWeb3AdapterStorageCache(web3Client, fsStorage);
-        this.eth = new EthereumClient(fsCache);
+        this.eth = new EthereumClient(fsCache, fsStorage);
     }
 
     public async filterFromBlock(blockNumber: number) {
@@ -36,7 +36,10 @@ class EthereumData {
                 const address = data.addresses[index];
                 await codeReader.ExtractCode(address);
                 const output = await this.eth.GetData(address, data.Block());
-                winston.debug(output);
+
+                if (output) {
+                    winston.debug(output);
+                }
             }
         }
     }

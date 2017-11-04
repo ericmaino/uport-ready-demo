@@ -3,6 +3,7 @@ import net = require('net');
 import winston = require('winston');
 import { JobQueue } from './../../modules/JobQueue';
 import { IWeb3Adapter } from './../IWeb3Adapter';
+import { EthereumCode } from './../models/EthereumCode';
 
 export class EthereumWeb3Adapter implements IWeb3Adapter {
     private readonly web3: Web3;
@@ -33,11 +34,7 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
         return traceLog.structLogs;
     }
 
-    public async GetAbi(address: string): Promise<any> {
-        return new Promise((resolve, reject) => reject('Not Supported'));
-    }
-
-    public async GetCode(address: string): Promise<any> {
+    public async GetCode(address: string): Promise<EthereumCode> {
         const code = await this.queue.ExecuteJob(() => new Promise((resolve, reject) => {
             this.web3.eth.getCode(address, (error, result) => {
                 if (error) {
@@ -49,7 +46,7 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
             });
         }));
 
-        return code;
+        return new EthereumCode(code);
     }
 
     public async ReadContract(address: string, abi: any, block?: any): Promise<any> {

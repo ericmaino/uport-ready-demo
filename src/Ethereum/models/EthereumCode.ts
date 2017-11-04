@@ -5,17 +5,21 @@ export class EthereumCode {
     private readonly hash: string;
 
     constructor(code: string) {
-        const sha3 = crypto.createHash('sha256');
-        sha3.update(code);
-        this.hash = sha3.digest('hex');
+        this.hash = EthereumCode.CreateHash(code);
         this.code = code;
     }
 
-    public Code() : string {
+    public Code(): string {
         return this.code;
     }
 
-    public Hash() : string {
+    public Hash(): string {
         return this.hash;
+    }
+
+    private static CreateHash(code: string): string {
+        const sha3 = crypto.createHash('sha256');
+        sha3.update(code);
+        return sha3.digest('hex');
     }
 }

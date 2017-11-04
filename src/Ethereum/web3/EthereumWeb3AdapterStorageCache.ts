@@ -1,6 +1,7 @@
 import winston = require('winston');
 import { IWeb3Adapter } from './../IWeb3Adapter';
 import { IStorage } from './../../interfaces/IStorage';
+import { EthereumCode } from './../models/EthereumCode';
 
 export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
     private readonly baseClient: IWeb3Adapter;
@@ -35,22 +36,14 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
         return trace;
     }
 
-    public async GetCode(address: string): Promise<any> {
+    public async GetCode(address: string): Promise<EthereumCode> {
         const code = await this.baseClient.GetCode(address);
-        this.storage.SaveItem(`Addresses/${address}/code.json`, JSON.stringify(code));
+        const hash = code.Hash();
+
+        this.storage.SaveItem(`Code/${code.Hash()}/code.json`, JSON.stringify(code.Code()));
+        this.storage.SaveItem(`Addresses/${address}/codeHash.json`, JSON.stringify(hash));
+
         return code;
-    }
-
-    public async GetAbi(address: string): Promise<any> {
-        const abiPath = `Addresses/${address}/abi.json`;
-        let abi: any = null;
-
-        if (await this.storage.Exists(abiPath)) {
-            const buffer = await this.storage.ReadItem(abiPath);
-            abi = JSON.parse(buffer);
-        }
-
-        return abi;
     }
 
     public ReadContract(address: string, abi: any, block?: any) : Promise<any> {
