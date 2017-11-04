@@ -43,10 +43,6 @@ export class EthereumClient implements IEthereumClient {
         return new TraceReader(traceLog);
     }
 
-    public async GetCode(address: EthereumAddress): Promise<EthereumCode> {
-        return await this.baseClient.GetCode(address.AsHex());
-    }
-
     public async GetData(address: EthereumAddress, block: EthereumBlock): Promise<any> {
         const abi = await this.GetAbi(address);
         let data = null;
@@ -59,7 +55,7 @@ export class EthereumClient implements IEthereumClient {
     }
 
     private async GetAbi(address: EthereumAddress): Promise<any> {
-        const code = await this.GetCode(address);
+        const code = await this.baseClient.GetCode(address.AsHex());
         const abiPath = `Code/${code.Hash()}/abi.json`;
         let abi: any = null;
 
