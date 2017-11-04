@@ -3,6 +3,7 @@
         "ai" : ""
     },
     "storage" :{
+        "implementation" : "FileSystem",
         "root" : "chain-data",
         "azure" : {
             "account" : "",

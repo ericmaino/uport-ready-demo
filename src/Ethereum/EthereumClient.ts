@@ -9,6 +9,7 @@ import { IEthereumClient } from './IEthereumClient';
 import { IWeb3Adapter } from './IWeb3Adapter';
 import { EthereumBlock, EthereumBlockDetail } from './models/EthereumBlock';
 import { EthereumTx } from './models/EthereumTx';
+import { EthereumIdentity } from './models/EthereumIdentity';
 import { EthereumCode } from './models/EthereumCode';
 import { EthereumAddress } from './models/EthereumAddress';
 import { TraceReader } from './readers/TraceReader';
@@ -52,6 +53,12 @@ export class EthereumClient implements IEthereumClient {
         }
 
         return data;
+    }
+
+    public static async GetIdentity(client: IWeb3Adapter): Promise<EthereumIdentity> {
+        const origin = await client.GetBlock(0);
+        const networkId = await client.GetNetworkId();
+        return new EthereumIdentity(networkId, origin.hash);
     }
 
     private async GetAbi(address: EthereumAddress): Promise<any> {

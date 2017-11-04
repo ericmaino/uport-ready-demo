@@ -117,4 +117,16 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
             });
         }));
     }
+
+    public async GetNetworkId() : Promise<number> {
+        return await this.queue.ExecuteJob(async () => new Promise((resolve, reject) => {
+            this.web3.version.getNetwork((err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        }));
+    }
 }

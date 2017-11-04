@@ -5,7 +5,7 @@ import winston = require('winston');
 export class EthereumBlock {
     private readonly content;
 
-    constructor(content) {
+    constructor(content : any) {
         this.content = content;
     }
 
@@ -19,6 +19,10 @@ export class EthereumBlock {
 
     public BlockNumber(): number {
         return this.content.number;
+    }
+
+    public BlockHash() : string {
+        return this.content.hash;
     }
 
     public AsSerializable(): string {
