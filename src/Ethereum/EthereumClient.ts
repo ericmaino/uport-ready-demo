@@ -62,6 +62,8 @@ export class EthereumClient implements IEthereumClient {
         if (await this.storage.Exists(abiPath)) {
             const buffer = await this.storage.ReadItem(abiPath);
             abi = JSON.parse(buffer);
+        } else {
+            winston.warn(`Unknown ABI for ${code.Hash()}`);
         }
 
         return abi;
