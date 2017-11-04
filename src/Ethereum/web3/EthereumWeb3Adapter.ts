@@ -46,7 +46,13 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
             });
         }));
 
-        return new EthereumCode(code);
+        let result: EthereumCode;
+
+        if (code && code.length > 2) {
+            result = new EthereumCode(code);
+        }
+
+        return result;
     }
 
     public async ReadContract(address: string, abi: any, block?: any): Promise<any> {

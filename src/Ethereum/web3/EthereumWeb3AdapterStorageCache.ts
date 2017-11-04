@@ -38,15 +38,18 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
 
     public async GetCode(address: string): Promise<EthereumCode> {
         const code = await this.baseClient.GetCode(address);
-        const hash = code.Hash();
 
-        this.storage.SaveItem(`Code/${code.Hash()}/code.json`, JSON.stringify(code.Code()));
-        this.storage.SaveItem(`Addresses/${address}/codeHash.json`, JSON.stringify(hash));
+        if (code) {
+            const hash = code.Hash();
+
+            this.storage.SaveItem(`Code/${code.Hash()}/code.json`, JSON.stringify(code.Code()));
+            this.storage.SaveItem(`Addresses/${address}/codeHash.json`, JSON.stringify(hash));
+        }
 
         return code;
     }
 
-    public ReadContract(address: string, abi: any, block?: any) : Promise<any> {
+    public ReadContract(address: string, abi: any, block?: any): Promise<any> {
         return this.baseClient.ReadContract(address, abi, block);
     }
 }

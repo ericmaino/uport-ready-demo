@@ -56,14 +56,17 @@ export class EthereumClient implements IEthereumClient {
 
     private async GetAbi(address: EthereumAddress): Promise<any> {
         const code = await this.baseClient.GetCode(address.AsHex());
-        const abiPath = `Code/${code.Hash()}/abi.json`;
         let abi: any = null;
 
-        if (await this.storage.Exists(abiPath)) {
-            const buffer = await this.storage.ReadItem(abiPath);
-            abi = JSON.parse(buffer);
-        } else {
-            winston.warn(`Unknown ABI for ${code.Hash()}`);
+        if (code) {
+            const abiPath = `Code/${code.Hash()}/abi.json`;
+
+            if (await this.storage.Exists(abiPath)) {
+                const buffer = await this.storage.ReadItem(abiPath);
+                abi = JSON.parse(buffer);
+            } else {
+                winston.warn(`Unknown ABI for ${code.Hash()}`);
+            }
         }
 
         return abi;
