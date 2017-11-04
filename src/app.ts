@@ -6,8 +6,6 @@ import { FileSystemStorage } from './adapters/FileSystemStorage';
 import { EthereumClient } from './Ethereum/EthereumClient';
 import { IEthereumClient } from './Ethereum/IEthereumClient';
 import { LoggingConfiguration } from './modules/LoggingConfiguration';
-import { TraceReader } from './Ethereum/readers/TraceReader';
-import { BlockAddressReader } from './Ethereum/readers/BlockAddressReader';
 import { BlockDetailReader } from './Ethereum/readers/BlockDetailReader';
 
 import util = require('util');
