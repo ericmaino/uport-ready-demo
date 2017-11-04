@@ -23,6 +23,7 @@ class EthereumData {
 
     public async filterFromBlock(blockNumber: number) {
         const reader = new BlockDetailReader(this.eth, blockNumber);
+        let nextBlock: number = blockNumber;
 
         while (await reader.MoveNext()) {
             const data = await reader.Read();
@@ -36,7 +37,15 @@ class EthereumData {
                     winston.debug(output);
                 }
             }
+
+            nextBlock = data.Block().BlockNumber() + 1;
         }
+
+        const _self = this;
+        setTimeout(async () => {
+            await _self.filterFromBlock(nextBlock)
+                .catch(err => winston.error(err));
+        }, 8500);
     }
 }
 
