@@ -1,0 +1,8 @@
+{
+    "logging" : {
+        "ai" : ""
+    },
+    "rpcUrl" : "http://localhost:8545",
+    "cacheRoot" : "d:/chaindata",
+    "startingBlock" : "7200"
+}

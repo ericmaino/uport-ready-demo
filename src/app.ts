@@ -9,7 +9,7 @@ import { LoggingConfiguration } from './modules/LoggingConfiguration';
 import { BlockDetailReader } from './Ethereum/readers/BlockDetailReader';
 
 import util = require('util');
-
+import config = require('config');
 
 class EthereumData {
     private readonly eth: IEthereumClient;
@@ -41,5 +41,6 @@ class EthereumData {
 }
 
 LoggingConfiguration.initialize(null);
-new EthereumData("http://localhost:8545", "d:/chaindata").filterFromBlock(7200)
+
+new EthereumData(config.get('rpcUrl'), config.get('cacheRoot')).filterFromBlock(config.get('startingBlock'))
     .catch(err => winston.error(err));
