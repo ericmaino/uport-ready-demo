@@ -1,7 +1,8 @@
 import winston = require('winston');
 
 import { EthereumWeb3Adapter } from './Ethereum/web3/EthereumWeb3Adapter';
-import { EthereumWeb3AdapterFileSystemCache } from './Ethereum/web3/EthereumWeb3AdapterFileSystemCache';
+import { EthereumWeb3AdapterStorageCache } from './Ethereum/web3/EthereumWeb3AdapterStorageCache';
+import { FileSystemStorage } from './adapters/FileSystemStorage';
 import { EthereumClient } from './Ethereum/EthereumClient';
 import { IEthereumClient } from './Ethereum/IEthereumClient';
 import { LoggingConfiguration } from './modules/LoggingConfiguration';
@@ -17,8 +18,9 @@ class EthereumData {
     private readonly eth: IEthereumClient;
 
     constructor(rpcUrl : string, storageRoot: string) {
+        const fsStorage = new FileSystemStorage(storageRoot);
         const web3Client = new EthereumWeb3Adapter(rpcUrl);
-        const fsCache = new EthereumWeb3AdapterFileSystemCache(web3Client, storageRoot);
+        const fsCache = new EthereumWeb3AdapterStorageCache(web3Client, fsStorage);
         this.eth = new EthereumClient(fsCache);
     }
 
