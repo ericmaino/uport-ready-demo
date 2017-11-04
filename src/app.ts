@@ -41,5 +41,5 @@ class EthereumData {
 }
 
 LoggingConfiguration.initialize(null);
-new EthereumData("http://localhost:8545", "d:/chaindata").filterFromBlock(2235)
+new EthereumData("http://localhost:8545", "d:/chaindata").filterFromBlock(7200)
     .catch(err => winston.error(err));
