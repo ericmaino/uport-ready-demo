@@ -7,10 +7,11 @@ import { EthereumWeb3AdapterStorageCache } from './Ethereum/web3/EthereumWeb3Ada
 import { FileSystemStorage } from './adapters/FileSystemStorage';
 import { AzureBlobStorage } from './adapters/AzureBlobStorage';
 import { ConsoleEventBus } from './adapters/ConsoleEventBus';
+import { EventBusGroup } from './adapters/EventBusGroup';
+import { AzureServiceBusEventBus, ServiceBusConfig } from './adapters/AzureServiceBusEventBus';
 import { EthereumClient } from './Ethereum/EthereumClient';
 import { BlockDetailReader } from './Ethereum/readers/BlockDetailReader';
 import { EthereumWatcher } from './Ethereum/EthereumWatcher';
-
 import util = require('util');
 import config = require('config');
 
@@ -21,10 +22,13 @@ class Program {
         const storageConfig = config.get('storage');
         const rpcUrl = config.get('rpcUrl');
         const startingBlock = config.get('startingBlock');
-
-        const eventBus = new ConsoleEventBus();
+        const serviceBusConfig = new ServiceBusConfig(config.get("serviceBus"));
         const web3Client = new EthereumWeb3Adapter(rpcUrl);
         const networkId = EthereumClient.GetIdentity(web3Client);
+
+        const eventBus = new EventBusGroup();
+        eventBus.AddEventBus(new ConsoleEventBus());
+        eventBus.AddEventBus(new AzureServiceBusEventBus(serviceBusConfig));
 
         let storage: IStorage;
         const storageRoot = `${storageConfig.root}/${(await networkId).AsString()}`;

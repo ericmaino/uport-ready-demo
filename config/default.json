@@ -10,6 +10,12 @@
             "key" : ""
         }
     },
+    "serviceBus" : {
+        "namespace" : "chaindata",
+        "keyName" : "Send",
+        "topic" : "Test",
+        "key" : ""
+    },
     "rpcUrl" : "http://localhost:8545",
     "startingBlock" : "7200"
 }
