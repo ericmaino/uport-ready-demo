@@ -13,23 +13,24 @@ export class BlockReader {
     constructor(eth: IEthereumClient, blockTracker: IBlockTracker) {
         this.eth = eth;
         this.blockTracker = blockTracker;
+        this.currentBlock = this.nextBlock = this.latestBlock = -1;
     }
 
     public async MoveNext(): Promise<boolean> {
         let moved: boolean = false;
 
-        if (!this.latestBlock) {
+        if (this.latestBlock === -1) {
             this.latestBlock = await this.eth.GetLatestBlockNumber();
         }
         else if (this.nextBlock === this.latestBlock) {
             this.latestBlock = await this.eth.GetLatestBlockNumber();
         }
 
-        if (!this.nextBlock) {
+        if (this.nextBlock === -1) {
             this.nextBlock = await this.blockTracker.NextBlock();
         }
 
-        if (this.nextBlock < this.latestBlock) {
+        if (this.nextBlock <= this.latestBlock) {
             this.currentBlock = this.nextBlock;
             this.nextBlock++;
             moved = true;

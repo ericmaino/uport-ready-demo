@@ -61,17 +61,18 @@ export class WatcherConfig implements IBlockTracker {
         this.configName = "watcherConfig.json";
         this.storage = storage;
         this.originalBlock = startingBlock;
+        this.nextBlock =  -1;
     }
 
     public async NextBlock(): Promise<number> {
-        if (!this.nextBlock) {
+        if (this.nextBlock === -1) {
             if (await this.storage.Exists(this.configName)) {
                 const content = await this.storage.ReadItem(this.configName);
                 this.nextBlock = JSON.parse(content).nextBlock;
             }
         }
 
-        if (!this.nextBlock) {
+        if (this.nextBlock === -1) {
             this.nextBlock = this.originalBlock;
         }
 
