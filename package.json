@@ -8,7 +8,7 @@
     "build-start": "npm run build && npm run start",
     "gulp": "gulp",
     "lint": "gulp tslint",
-    "start": "node ./release/app.js",
+    "start": "node ./release/watcher.js",
     "validate": "npm ls"
   },
   "author": {
