@@ -5,10 +5,12 @@
   "main": "./bundle",
   "scripts": {
     "build": "gulp clean transpile",
-    "build-start": "npm run build && npm run start",
+    "build-start-watcher": "npm run build && npm run start-watcher",
+    "build-start-producer": "npm run build && npm run start-producer",
     "gulp": "gulp",
     "lint": "gulp tslint",
-    "start": "node ./release/watcher.js",
+    "start-watcher": "node ./release/watcher.js",
+    "start-producer": "node ./release/producer.js",
     "validate": "npm ls"
   },
   "author": {
