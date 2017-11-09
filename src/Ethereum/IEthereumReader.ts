@@ -4,7 +4,7 @@ import { EthereumCode } from './models/EthereumCode';
 import { EthereumAddress } from './models/EthereumAddress';
 import { IReader } from './../interfaces/IReader';
 
-export interface IEthereumClient {
+export interface IEthereumReader {
     GetLatestBlockNumber(): Promise<number>;
     GetBlockFromNumber(blockNumber: number): Promise<EthereumBlock>;
     GetTransaction(txHash: string): Promise<EthereumTx>;

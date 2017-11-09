@@ -1,14 +1,14 @@
 import winston = require('winston');
-import { IEthereumClient } from './../IEthereumClient';
+import { IEthereumReader } from './../IEthereumReader';
 import { EthereumBlock } from './../models/EthereumBlock';
 import { EthereumTx } from './../models/EthereumTx';
 
 export class TxReader {
-    private eth: IEthereumClient;
+    private eth: IEthereumReader;
     private readonly block: EthereumBlock;
     private index: number;
 
-    constructor(eth: IEthereumClient, block: EthereumBlock) {
+    constructor(eth: IEthereumReader, block: EthereumBlock) {
         this.eth = eth;
         this.block = block;
         this.index = -1;

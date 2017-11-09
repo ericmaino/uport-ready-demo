@@ -3,19 +3,19 @@ import winston = require('winston');
 import { IStorage } from './../interfaces/IStorage';
 import { IEventBus } from './../interfaces/IEventBus';
 import { IBlockTracker } from './../interfaces/IBlockTracker';
-import { IEthereumClient } from './IEthereumClient';
+import { IEthereumReader } from './IEthereumReader';
 import { BlockDetailReader } from './readers/BlockDetailReader';
 
 import util = require('util');
 import config = require('config');
 
 export class EthereumWatcher {
-    private readonly eth: IEthereumClient;
+    private readonly eth: IEthereumReader;
     private readonly eventBus: IEventBus;
     private readonly blockTracker: WatcherConfig;
     private readonly blockReader: BlockDetailReader;
 
-    constructor(client: IEthereumClient, storage: IStorage, eventBus: IEventBus, blockNumber: number) {
+    constructor(client: IEthereumReader, storage: IStorage, eventBus: IEventBus, blockNumber: number) {
         this.eth = client;
         this.eventBus = eventBus;
         this.blockTracker = new WatcherConfig(storage, blockNumber);

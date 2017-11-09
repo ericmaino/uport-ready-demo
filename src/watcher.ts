@@ -9,7 +9,7 @@ import { AzureBlobStorage } from './adapters/AzureBlobStorage';
 import { ConsoleEventBus } from './adapters/ConsoleEventBus';
 import { EventBusGroup } from './adapters/EventBusGroup';
 import { AzureServiceBusEventBus, ServiceBusConfig } from './adapters/AzureServiceBusEventBus';
-import { EthereumClient } from './Ethereum/EthereumClient';
+import { EthereumReader } from './Ethereum/EthereumReader';
 import { BlockDetailReader } from './Ethereum/readers/BlockDetailReader';
 import { EthereumWatcher } from './Ethereum/EthereumWatcher';
 import util = require('util');
@@ -24,7 +24,7 @@ class Program {
         const startingBlock = config.get('startingBlock');
         const serviceBusConfig = new ServiceBusConfig(config.get("serviceBus"));
         const web3Client = new EthereumWeb3Adapter(rpcUrl);
-        const networkId = EthereumClient.GetIdentity(web3Client);
+        const networkId = EthereumReader.GetIdentity(web3Client);
 
         const eventBus = new EventBusGroup();
         eventBus.AddEventBus(new ConsoleEventBus());
@@ -40,7 +40,7 @@ class Program {
         }
 
         const fsCache = new EthereumWeb3AdapterStorageCache(web3Client, storage);
-        const ethClient = new EthereumClient(fsCache, storage);
+        const ethClient = new EthereumReader(fsCache, storage);
 
         new EthereumWatcher(ethClient, storage, eventBus, startingBlock)
             .Monitor()

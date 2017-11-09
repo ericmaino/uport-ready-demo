@@ -1,5 +1,5 @@
 import winston = require('winston');
-import { IEthereumClient } from './../IEthereumClient';
+import { IEthereumReader } from './../IEthereumReader';
 import { IReader } from './../../interfaces/IReader';
 import { IBlockTracker } from './../../interfaces/IBlockTracker';
 import { EthereumBlockDetail } from './../models/EthereumBlock';
@@ -9,10 +9,10 @@ import { BlockReader } from './BlockReader';
 import { TxReader } from './TxReader';
 
 export class BlockDetailReader {
-    private eth: IEthereumClient;
+    private eth: IEthereumReader;
     private readonly blockReader: BlockReader;
 
-    constructor(eth: IEthereumClient, blockTracker: IBlockTracker) {
+    constructor(eth: IEthereumReader, blockTracker: IBlockTracker) {
         this.eth = eth;
         this.blockReader = new BlockReader(eth, blockTracker);
     }

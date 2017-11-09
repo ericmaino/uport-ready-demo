@@ -5,7 +5,7 @@ import path = require('path');
 import { IReader } from './../interfaces/IReader';
 import { IStorage } from './../interfaces/IStorage';
 
-import { IEthereumClient } from './IEthereumClient';
+import { IEthereumReader } from './IEthereumReader';
 import { IWeb3Adapter } from './IWeb3Adapter';
 import { EthereumBlock, EthereumBlockDetail } from './models/EthereumBlock';
 import { EthereumTx } from './models/EthereumTx';
@@ -14,7 +14,7 @@ import { EthereumCode } from './models/EthereumCode';
 import { EthereumAddress } from './models/EthereumAddress';
 import { TraceReader } from './readers/TraceReader';
 
-export class EthereumClient implements IEthereumClient {
+export class EthereumReader implements IEthereumReader {
     private readonly baseClient: IWeb3Adapter;
     private readonly storage: IStorage;
 
