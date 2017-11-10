@@ -145,7 +145,7 @@ class ContractFactory {
 
     private async WriteContractData(sourceSignature: string, contract: any, contractName: string): Promise<void> {
         winston.debug(`Persisting contract ${contractName}`);
-        const contractSignature = this.notary.GetSignature(`0x${contract.bytecode}`);
+        const contractSignature = this.notary.GetSignature(`0x${contract.runtimeBytecode}`);
         const contractPaths = this.paths.GetContractPaths(sourceSignature, contractSignature, contractName);
         await this.storage.SaveItem(contractPaths.CompiledPath(), JSON.stringify(contract));
         await this.storage.SaveItem(contractPaths.AbiPath(), JSON.stringify(JSON.parse(contract.interface)));
