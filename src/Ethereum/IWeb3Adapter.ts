@@ -1,4 +1,6 @@
 import { EthereumCode } from './models/EthereumCode';
+import { EthereumEstimate } from './models/EthereumEstimate';
+import { EthereumTxInput } from './models/EthereumTxInput';
 
 export interface IWeb3Adapter {
     GetCode(address: string): Promise<EthereumCode>;
@@ -8,4 +10,6 @@ export interface IWeb3Adapter {
     GetBlock(identitifer: any): Promise<any>;
     GetNetworkId(): Promise<number>;
     ReadContract(address: string, abi: any, block: any): Promise<any>;
+    EstimateTx(tx: EthereumTxInput) : Promise<EthereumEstimate>;
+    PrepareEstimatedTx(tx: EthereumEstimate) : Promise<any>;
 }

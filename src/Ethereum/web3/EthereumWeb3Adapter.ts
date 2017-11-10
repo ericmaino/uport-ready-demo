@@ -4,6 +4,8 @@ import winston = require('winston');
 import { JobQueue } from './../../modules/JobQueue';
 import { IWeb3Adapter } from './../IWeb3Adapter';
 import { EthereumCode } from './../models/EthereumCode';
+import { EthereumEstimate } from './../models/EthereumEstimate';
+import { EthereumTxInput } from './../models/EthereumTxInput';
 
 export class EthereumWeb3Adapter implements IWeb3Adapter {
     private readonly web3: Web3;
@@ -118,7 +120,7 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
         }));
     }
 
-    public async GetNetworkId() : Promise<number> {
+    public async GetNetworkId(): Promise<number> {
         return await this.queue.ExecuteJob(async () => new Promise((resolve, reject) => {
             this.web3.version.getNetwork((err, result) => {
                 if (err) {
@@ -128,5 +130,24 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
                 }
             });
         }));
+    }
+
+    public async EstimateTx(tx: EthereumTxInput): Promise<EthereumEstimate> {
+        return await this.queue.ExecuteJob(async () => new Promise((resolve, reject) => {
+            const rawEstimate = this.web3.eth.estimateGas(tx.AsRawTx());
+            const gasPrice = this.web3.eth.gasPrice.toNumber();
+            const nonce = this.web3.eth.getTransactionCount(tx.FromAddress().AsHex());
+
+            resolve(new EthereumEstimate(tx, nonce, rawEstimate, gasPrice));
+        }));
+    }
+
+    public async PrepareEstimatedTx(tx: EthereumEstimate): Promise<any> {
+        const prepared = tx.TxInput().AsRawTx();
+        prepared.nonce = tx.Nonce();
+        prepared.gasPrice = this.web3.toHex(tx.GasPrice());
+        prepared.gasLimit = this.web3.toHex(tx.GasEstimate());
+
+        return new Promise<any>(resolve => resolve(prepared));
     }
 }

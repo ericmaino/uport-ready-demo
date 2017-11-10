@@ -2,6 +2,8 @@ import winston = require('winston');
 import { IWeb3Adapter } from './../IWeb3Adapter';
 import { IStorage } from './../../interfaces/IStorage';
 import { EthereumCode } from './../models/EthereumCode';
+import { EthereumEstimate } from './../models/EthereumEstimate';
+import { EthereumTxInput } from './../models/EthereumTxInput';
 
 export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
     private readonly baseClient: IWeb3Adapter;
@@ -53,7 +55,15 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
         return this.baseClient.ReadContract(address, abi, block);
     }
 
-    public async GetNetworkId() : Promise<number> {
-       return this.baseClient.GetNetworkId();
+    public async GetNetworkId(): Promise<number> {
+        return this.baseClient.GetNetworkId();
+    }
+
+    public async EstimateTx(tx: EthereumTxInput): Promise<EthereumEstimate> {
+        return this.baseClient.EstimateTx(tx);
+    }
+
+    public async PrepareEstimatedTx(tx: EthereumEstimate): Promise<any> {
+        return this.baseClient.PrepareEstimatedTx(tx);
     }
 }
