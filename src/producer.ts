@@ -4,6 +4,7 @@ import coder = require('web3/lib/solidity/coder');
 
 import { LoggingConfiguration } from './modules/LoggingConfiguration';
 import { FileSystemStorage } from './adapters/FileSystemStorage';
+import { AzureBlobStorage } from './adapters/AzureBlobStorage';
 import { Sha256Notary } from './adapters/Sha256Notary';
 import { GenericIdentifier } from './adapters/GenericIdentifier';
 import { IIdentifier } from './interfaces/IIdentifier';
@@ -15,23 +16,33 @@ import { EthereumTxInput } from './Ethereum/models/EthereumTxInput';
 import { EthereumAddress } from './Ethereum/models/EthereumAddress';
 import { EthereumEstimate } from './Ethereum/models/EthereumEstimate';
 import { SigningNotary } from './adapters/SigningNotary';
+import config = require('config');
 
 class Program {
     public static async Run() {
         LoggingConfiguration.initialize(null);
+
+        const storageConfig = config.get('storage');
+        const rpcUrl = config.get('rpcUrl');
+        const testConfig = config.get('test');
+
         const notary = new Sha256Notary();
-        const fs = new FileSystemStorage('d:/src/Blockchain/ethereum-data/test/localAssets');
-        const rawContract = (await fs.ReadItem('Test2.sol'));
+
+        let fs : IStorage;
+        if (storageConfig.implementation === 'FileSystem') {
+            fs = new FileSystemStorage(storageConfig.root);
+        } else {
+            fs = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, storageConfig.root);
+        }
+
+        const rawContract = (await fs.ReadItem(testConfig.contract.file));
         const signer = new SigningNotary(fs);
 
-        const web3 = new EthereumWeb3Adapter('http://localhost:8545');
+        const web3 = new EthereumWeb3Adapter(rpcUrl);
         const factory = new ContractFactory(web3, fs, notary);
-        const fromAddress = new EthereumAddress('0xcd2051a37cdc02db5da21d61415de21af4058a5e');
+        const fromAddress = new EthereumAddress(testConfig.account);
         const id = await factory.UploadAndVerify(rawContract);
-        const prepared = await factory.PrepareTransaction(fromAddress, id, "Device", {
-            deviceAddress: "",
-            description: "Maino"
-        });
+        const prepared = await factory.PrepareTransaction(fromAddress, id, testConfig.contract.name, testConfig.contract.parameters );
         const signed = await signer.Sign(prepared);
         const receipt = await web3.SendSignedTx(signed);
         winston.debug(receipt);
