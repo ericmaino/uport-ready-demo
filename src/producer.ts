@@ -13,7 +13,7 @@ import { IWeb3Adapter } from './Ethereum/IWeb3Adapter';
 import { EthereumWeb3Adapter } from './Ethereum/web3/EthereumWeb3Adapter';
 import { EthereumTxInput } from './Ethereum/models/EthereumTxInput';
 import { EthereumAddress } from './Ethereum/models/EthereumAddress';
-import { EthereumEstimate} from './Ethereum/models/EthereumEstimate';
+import { EthereumEstimate } from './Ethereum/models/EthereumEstimate';
 import { SigningNotary } from './adapters/SigningNotary';
 
 class Program {
@@ -52,7 +52,7 @@ class ContractFactory {
 
     public async UploadAndVerify(content: string): Promise<IIdentifier> {
         const fileSignature = this.notary.GetSignature(content);
-        const compiledPath = this.GetCompilePath(fileSignature);
+        const compiledBase = this.GetBasePath(fileSignature);
 
         if (!await this.storage.Exists(fileSignature)) {
             const compiled = solc.compile(content, 1);
@@ -63,16 +63,20 @@ class ContractFactory {
                 throw error;
             }
 
-            await this.storage.SaveItem(compiledPath, JSON.stringify(compiled.contracts));
+            Object.keys(compiled.contracts).forEach(async (contractName) => {
+                const contract = compiled.contracts[contractName];
+                const contractRoot = `${compiledBase}/${contractName.substr(1)}`;
+                await this.storage.SaveItem(`${contractRoot}/contract.json`, JSON.stringify(contract));
+                await this.storage.SaveItem(`${contractRoot}/abi.json`, JSON.stringify(JSON.parse(contract.interface)));
+            });
         }
 
         return new GenericIdentifier(fileSignature);
     }
 
     public async PrepareTransaction(address: EthereumAddress, id: IIdentifier, contractName: string, argumentPayload: any): Promise<any> {
-        const contractPath = this.GetCompilePath(id.AsString());
-        const compiled = JSON.parse(await this.storage.ReadItem(contractPath));
-        const contract = compiled[`:${contractName}`];
+        const contractPath = this.GetCompilePath(id.AsString(), contractName);
+        const contract = JSON.parse(await this.storage.ReadItem(contractPath));
         const abi = JSON.parse(contract.interface);
         const constructor: string = null;
         const encodedParams = this.EncodeContractParameters(abi, argumentPayload, constructor);
@@ -104,8 +108,8 @@ class ContractFactory {
         return `Contracts/${hash}`;
     }
 
-    private GetCompilePath(hash: string): string {
-        return `${this.GetBasePath(hash)}/compiled.json`;
+    private GetCompilePath(hash: string, contractName: string): string {
+        return `${this.GetBasePath(hash)}/${contractName}/contract.json`;
     }
 }
 
