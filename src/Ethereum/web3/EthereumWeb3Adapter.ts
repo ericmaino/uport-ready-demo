@@ -162,4 +162,18 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
             });
         }));
     }
+
+    public async GetBalance(address: string): Promise<number> {
+        return await this.queue.ExecuteJob(async () => new Promise((resolve, reject) => {
+            this.web3.eth.getBalance(address, (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const wei = result.toNumber();
+                    const ether = this.web3.fromWei(wei, 'ether');
+                    resolve(ether);
+                }
+            });
+        }));
+    }
 }

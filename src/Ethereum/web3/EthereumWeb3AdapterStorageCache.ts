@@ -70,4 +70,8 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
     public async SendSignedTx(txBytesAsHex: string): Promise<string> {
         return this.baseClient.SendSignedTx(txBytesAsHex);
     }
+
+    public async GetBalance(address: string): Promise<number> {
+        return this.baseClient.GetBalance(address);
+    }
 }
