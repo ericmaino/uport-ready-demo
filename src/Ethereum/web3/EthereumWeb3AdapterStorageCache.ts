@@ -66,4 +66,8 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
     public async PrepareEstimatedTx(tx: EthereumEstimate): Promise<any> {
         return this.baseClient.PrepareEstimatedTx(tx);
     }
+
+    public async SendSignedTx(txBytesAsHex: string): Promise<string> {
+        return this.baseClient.SendSignedTx(txBytesAsHex);
+    }
 }

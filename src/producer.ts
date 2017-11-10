@@ -14,6 +14,7 @@ import { EthereumWeb3Adapter } from './Ethereum/web3/EthereumWeb3Adapter';
 import { EthereumTxInput } from './Ethereum/models/EthereumTxInput';
 import { EthereumAddress } from './Ethereum/models/EthereumAddress';
 import { EthereumEstimate} from './Ethereum/models/EthereumEstimate';
+import { SigningNotary } from './adapters/SigningNotary';
 
 class Program {
     public static async Run() {
@@ -21,16 +22,19 @@ class Program {
         const notary = new Sha256Notary();
         const fs = new FileSystemStorage('d:/src/Blockchain/ethereum-data/test/localAssets');
         const rawContract = (await fs.ReadItem('Test2.sol'));
+        const signer = new SigningNotary(fs);
 
         const web3 = new EthereumWeb3Adapter('http://localhost:8545');
         const factory = new ContractFactory(web3, fs, notary);
-        const fromAddress = new EthereumAddress('0xe8dbb8e21b948cdf7a39a02fd02e4ef606fbbd02');
+        const fromAddress = new EthereumAddress('0xcd2051a37cdc02db5da21d61415de21af4058a5e');
         const id = await factory.UploadAndVerify(rawContract);
-        const reciept = await factory.PrepareTransaction(fromAddress, id, "Device", {
+        const prepared = await factory.PrepareTransaction(fromAddress, id, "Device", {
             deviceAddress: "",
             description: "Maino"
         });
-        winston.debug(reciept);
+        const signed = await signer.Sign(prepared);
+        const receipt = await web3.SendSignedTx(signed);
+        winston.debug(receipt);
     }
 }
 

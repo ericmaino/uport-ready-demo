@@ -22,6 +22,7 @@ export class SigningNotary implements ISigningNotary {
     private async ReadKey(address: string): Promise<Buffer> {
         const rawContent = await this.storage.ReadItem(`keystore/${address}.json`);
         const keyContent = JSON.parse(rawContent);
-        return new Buffer(KeyFactory.recover("", keyContent), 'hex');
+        const recovered = KeyFactory.recover("", keyContent);
+        return new Buffer(recovered, 'hex');
     }
 }

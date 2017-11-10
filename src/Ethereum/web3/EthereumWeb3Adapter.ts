@@ -150,4 +150,16 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
 
         return new Promise<any>(resolve => resolve(prepared));
     }
+
+    public async SendSignedTx(txBytesAsHex: string): Promise<string> {
+        return await this.queue.ExecuteJob(async () => new Promise((resolve, reject) => {
+            this.web3.eth.sendRawTransaction(txBytesAsHex, (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        }));
+    }
 }
