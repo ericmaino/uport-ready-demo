@@ -50,7 +50,7 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
 
         let result: EthereumCode;
 
-        if (code && code.length > 2) {
+        if (code && code.length > 10) {
             result = new EthereumCode(code);
         }
 
