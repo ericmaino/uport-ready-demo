@@ -38,44 +38,123 @@ class Program {
     }
 }
 
+class ContractPaths {
+    private readonly abiPath: string;
+    private readonly compiledPath: string;
+    private readonly namePath: string;
+    private readonly sourceMapPath: string;
+
+    constructor(root: string, signature: string, contractName: string, sourceMap: string) {
+        const base = `${root}/Code/${signature}`;
+        this.abiPath = `${base}/abi.json`;
+        this.compiledPath = `${base}/compiled.json`;
+        this.namePath = `${base}/${contractName}`;
+        this.sourceMapPath = sourceMap;
+    }
+
+    public AbiPath(): string {
+        return this.abiPath;
+    }
+
+    public CompiledPath(): string {
+        return this.compiledPath;
+    }
+
+    public NamePath(): string {
+        return this.namePath;
+    }
+
+    public SourceMapPath(): string {
+        return this.sourceMapPath;
+    }
+}
+
+class ContractPathFactory {
+    private readonly root: string;
+    private readonly storage: IStorage;
+
+    constructor(storage: IStorage) {
+        this.root = "Contracts";
+        this.storage = storage;
+    }
+
+    public GetSourceRoot(fileSignature: string): string {
+        return `${this.root}/Sources/${fileSignature}`;
+    }
+
+    public GetSourceFilePath(fileSignature: string): string {
+        return `${this.GetSourceRoot(fileSignature)}/source.json`;
+    }
+    public GetContractPaths(sourceSignature: string, signature: string, contractName: string): ContractPaths {
+        return new ContractPaths(this.root, signature, contractName, this.GetSourceToCodeMapPath(sourceSignature, contractName));
+    }
+
+    public async GetCompiledPath(sourceSignature: string, contractName: string): Promise<string> {
+        const sourceMapPath = this.GetSourceToCodeMapPath(sourceSignature, contractName);
+        const contractSignature = await this.storage.ReadItem(sourceMapPath);
+        return new ContractPaths(this.root, contractSignature, contractName, sourceMapPath).CompiledPath();
+    }
+
+    private GetSourceToCodeMapPath(sourceSignature: string, contractName: string): string {
+        return `${this.GetSourceRoot(sourceSignature)}/${contractName}.json`;
+    }
+}
+
 class ContractFactory {
 
     private readonly web3: IWeb3Adapter;
     private readonly storage: IStorage;
     private readonly notary: INotary;
+    private readonly paths: ContractPathFactory;
 
     constructor(web3: IWeb3Adapter, storage: IStorage, notary: INotary) {
         this.web3 = web3;
         this.storage = storage;
         this.notary = notary;
+        this.paths = new ContractPathFactory(storage);
     }
 
     public async UploadAndVerify(content: string): Promise<IIdentifier> {
-        const fileSignature = this.notary.GetSignature(content);
-        const compiledBase = this.GetBasePath(fileSignature);
+        const sourceSignature = this.notary.GetSignature(content);
+        const sourceFile = this.paths.GetSourceFilePath(sourceSignature);
 
-        if (!await this.storage.Exists(fileSignature)) {
+        if (!await this.storage.Exists(sourceFile)) {
+            winston.debug(`Compiling ${sourceSignature}`);
             const compiled = solc.compile(content, 1);
 
             if (compiled.errors && compiled.errors.length > 0) {
+                await this.storage.SaveItem(sourceFile, JSON.stringify(compiled));
                 const error = new Error(compiled.errors.join('\n'));
                 error.name = "Compilation failed";
                 throw error;
             }
+            const promises = new Array<Promise<void>>();
 
-            Object.keys(compiled.contracts).forEach(async (contractName) => {
-                const contract = compiled.contracts[contractName];
-                const contractRoot = `${compiledBase}/${contractName.substr(1)}`;
-                await this.storage.SaveItem(`${contractRoot}/contract.json`, JSON.stringify(contract));
-                await this.storage.SaveItem(`${contractRoot}/abi.json`, JSON.stringify(JSON.parse(contract.interface)));
+            Object.keys(compiled.contracts).forEach(contractKey => {
+                const contract = compiled.contracts[contractKey];
+                const contractName = contractKey.substr(1);
+                promises.push(this.WriteContractData(sourceSignature, contract, contractName));
             });
+
+            await Promise.all(promises);
+            await this.storage.SaveItem(sourceFile, "Success");
         }
 
-        return new GenericIdentifier(fileSignature);
+        return new GenericIdentifier(sourceSignature);
+    }
+
+    private async WriteContractData(sourceSignature: string, contract: any, contractName: string): Promise<void> {
+        winston.debug(`Persisting contract ${contractName}`);
+        const contractSignature = this.notary.GetSignature(`0x${contract.bytecode}`);
+        const contractPaths = this.paths.GetContractPaths(sourceSignature, contractSignature, contractName);
+        await this.storage.SaveItem(contractPaths.CompiledPath(), JSON.stringify(contract));
+        await this.storage.SaveItem(contractPaths.AbiPath(), JSON.stringify(JSON.parse(contract.interface)));
+        await this.storage.SaveItem(contractPaths.NamePath(), "");
+        await this.storage.SaveItem(contractPaths.SourceMapPath(), contractSignature);
     }
 
     public async PrepareTransaction(address: EthereumAddress, id: IIdentifier, contractName: string, argumentPayload: any): Promise<any> {
-        const contractPath = this.GetCompilePath(id.AsString(), contractName);
+        const contractPath = await this.paths.GetCompiledPath(id.AsString(), contractName);
         const contract = JSON.parse(await this.storage.ReadItem(contractPath));
         const abi = JSON.parse(contract.interface);
         const constructor: string = null;
@@ -104,13 +183,7 @@ class ContractFactory {
         return coder.encodeParams(types, values);
     }
 
-    private GetBasePath(hash: string): string {
-        return `Contracts/${hash}`;
-    }
 
-    private GetCompilePath(hash: string, contractName: string): string {
-        return `${this.GetBasePath(hash)}/${contractName}/contract.json`;
-    }
 }
 
 Program.Run()
