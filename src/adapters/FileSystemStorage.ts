@@ -19,7 +19,7 @@ export class FileSystemStorage implements IStorage {
 
     public async ReadItem(itemPath: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            fs.readFile(this.GetPath(itemPath), (err, data) => {
+            fs.readFile(this.GetPath(itemPath), {encoding: 'utf8'}, (err, data) => {
                 if (err) {
                     reject(err);
                 }
@@ -40,7 +40,7 @@ export class FileSystemStorage implements IStorage {
         const targetPath = this.GetPath(itemPath);
         return new Promise((resolve, reject) => {
             this.EnsureDirectoryExists(targetPath);
-            fs.writeFile(targetPath, content, (err) => {
+            fs.writeFile(targetPath, content, {encoding: 'utf8'}, (err) => {
                 if (err) {
                     reject(err);
                 }
