@@ -30,19 +30,23 @@ class Program {
         eventBus.AddEventBus(new ConsoleEventBus());
         eventBus.AddEventBus(new AzureServiceBusEventBus(serviceBusConfig));
 
-        let storage: IStorage;
+        let chiainStorage: IStorage;
+        let constractStorage: IStorage;
         const storageRoot = `${storageConfig.root}/${(await networkId).AsString()}`;
+        const contractRoot = `${storageConfig.root}/Contracts`;
 
         if (storageConfig.implementation === 'FileSystem') {
-            storage = new FileSystemStorage(storageRoot);
+            chiainStorage = new FileSystemStorage(storageRoot);
+            constractStorage = new FileSystemStorage(contractRoot);
         } else {
-            storage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, storageRoot);
+            chiainStorage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, storageRoot);
+            constractStorage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, contractRoot);
         }
 
-        const fsCache = new EthereumWeb3AdapterStorageCache(web3Client, storage);
-        const ethClient = new EthereumReader(fsCache, storage);
+        const fsCache = new EthereumWeb3AdapterStorageCache(web3Client, chiainStorage);
+        const ethClient = new EthereumReader(fsCache, constractStorage);
 
-        new EthereumWatcher(ethClient, storage, eventBus, startingBlock)
+        new EthereumWatcher(ethClient, chiainStorage, eventBus, startingBlock)
             .Monitor()
             .catch(err => winston.error(err));
     }
