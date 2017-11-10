@@ -9,11 +9,13 @@ export class ServiceBusConfig {
     private readonly identifier: string;
 
     constructor(config: any) {
-        this.namespace = config.namespace;
-        this.keyName = config.keyName;
-        this.key = config.key;
-        this.topic = config.topic;
-        this.identifier = `'${this.namespace}' - ${this.topic}'`;
+        if (config && config.key) {
+            this.namespace = config.namespace;
+            this.keyName = config.keyName;
+            this.key = config.key;
+            this.topic = config.topic;
+            this.identifier = `'${this.namespace}' - ${this.topic}'`;
+        }
     }
 
     public AsConnectionString(): string {
@@ -26,6 +28,10 @@ export class ServiceBusConfig {
 
     public Topic(): string {
         return this.topic;
+    }
+
+    public IsValid(): boolean {
+        return this.key !== undefined;
     }
 }
 

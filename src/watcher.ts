@@ -22,13 +22,16 @@ class Program {
         const storageConfig = config.get('storage');
         const rpcUrl = config.get('rpcUrl');
         const startingBlock = config.get('startingBlock');
-        const serviceBusConfig = new ServiceBusConfig(config.get("serviceBus"));
         const web3Client = new EthereumWeb3Adapter(rpcUrl);
         const networkId = EthereumReader.GetIdentity(web3Client);
+        const serviceBusConfig = new ServiceBusConfig(config.get("serviceBus"));
 
         const eventBus = new EventBusGroup();
         eventBus.AddEventBus(new ConsoleEventBus());
-        eventBus.AddEventBus(new AzureServiceBusEventBus(serviceBusConfig));
+
+        if (serviceBusConfig.IsValid()) {
+            eventBus.AddEventBus(new AzureServiceBusEventBus(serviceBusConfig));
+        }
 
         let chiainStorage: IStorage;
         let constractStorage: IStorage;
