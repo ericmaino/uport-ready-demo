@@ -46,17 +46,16 @@ export class EthereumReader implements IEthereumReader {
 
     public async GetData(address: EthereumAddress, block: EthereumBlock): Promise<any> {
         const abi = await this.GetAbi(address);
-        let data = null;
+        let data : any = {};
 
         if (abi) {
             data = await this.baseClient.ReadContract(address.AsHex(), abi, block.BlockNumber());
-        } else {
-            const balance = await this.baseClient.GetBalance(address.AsHex());
-            data = {
-                address: address.AsHex(),
-                balance: balance
-            };
         }
+
+        const balance = await this.baseClient.GetBalance(address.AsHex());
+        data._block = block.BlockNumber();
+        data._address = address.AsHex();
+        data._balance = balance;
 
         return data;
     }
