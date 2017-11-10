@@ -16,11 +16,11 @@ import { TraceReader } from './readers/TraceReader';
 
 export class EthereumReader implements IEthereumReader {
     private readonly baseClient: IWeb3Adapter;
-    private readonly storage: IStorage;
+    private readonly contractStorage: IStorage;
 
-    constructor(baseClient: IWeb3Adapter, storage: IStorage) {
+    constructor(baseClient: IWeb3Adapter, contractStorage: IStorage) {
         this.baseClient = baseClient;
-        this.storage = storage;
+        this.contractStorage = contractStorage;
     }
 
     public async GetLatestBlockNumber(): Promise<number> {
@@ -74,8 +74,8 @@ export class EthereumReader implements IEthereumReader {
         if (code) {
             const abiPath = `Code/${code.Hash()}/abi.json`;
 
-            if (await this.storage.Exists(abiPath)) {
-                const buffer = await this.storage.ReadItem(abiPath);
+            if (await this.contractStorage.Exists(abiPath)) {
+                const buffer = await this.contractStorage.ReadItem(abiPath);
                 abi = JSON.parse(buffer);
             } else {
                 winston.warn(`Unknown ABI for ${code.Hash()}`);
