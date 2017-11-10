@@ -25,7 +25,7 @@ export class EthereumTx {
     }
 
     public OriginatingAddress(): EthereumAddress {
-        return new EthereumAddress(this.receipt.from);
+        return new EthereumAddress(this.tx.from);
     }
 
     public Hash(): string {
