@@ -59,7 +59,7 @@ export class FileSystemStorage implements IStorage {
         const split = filePath.split(path.sep);
         split.slice(0, -1).reduce((prev, curr, i) => {
             const dir = prev + path.sep + curr;
-            if (!fs.existsSync(prev)) {
+            if (prev && !fs.existsSync(prev)) {
                 fs.mkdirSync(prev);
             }
 
