@@ -34,11 +34,11 @@ export class EthereumWatcher {
                 const output = await this.eth.GetData(address, block);
 
                 if (output) {
-                    this.eventBus.SendEvent(output);
+                    await this.eventBus.SendEvent(output);
                 }
             }
 
-            this.blockTracker.MarkComplete(block.BlockNumber());
+            await this.blockTracker.MarkComplete(block.BlockNumber());
         }
 
         const _self = this;

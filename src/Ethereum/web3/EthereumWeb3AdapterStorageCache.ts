@@ -18,25 +18,25 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
 
     public async GetBlock(identifier: number): Promise<any> {
         const block = await this.baseClient.GetBlock(identifier);
-        this.storage.SaveItem(`Blocks/${block.number}/block.json`, JSON.stringify(block));
+        await this.storage.SaveItem(`Blocks/${block.number}/block.json`, JSON.stringify(block));
         return block;
     }
 
     public async GetTransaction(txHash: string): Promise<any> {
         const tx = await this.baseClient.GetTransaction(txHash);
-        this.storage.SaveItem(`Tx/${txHash}/tx.json`, JSON.stringify(tx));
+        await this.storage.SaveItem(`Tx/${txHash}/tx.json`, JSON.stringify(tx));
         return tx;
     }
 
     public async GetTransactionReceipt(txHash: string): Promise<any> {
         const receipt = await this.baseClient.GetTransactionReceipt(txHash);
-        this.storage.SaveItem(`Tx/${txHash}/receipt.json`, JSON.stringify(receipt));
+        await this.storage.SaveItem(`Tx/${txHash}/receipt.json`, JSON.stringify(receipt));
         return receipt;
     }
 
     public async GetTrace(txHash: string): Promise<any> {
         const trace = await this.baseClient.GetTrace(txHash);
-        this.storage.SaveItem(`Tx/${txHash}/trace.json`, JSON.stringify(trace));
+        await this.storage.SaveItem(`Tx/${txHash}/trace.json`, JSON.stringify(trace));
         return trace;
     }
 
@@ -46,8 +46,8 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
         if (code) {
             const hash = code.Hash();
 
-            this.storage.SaveItem(`Code/${code.Hash()}/code.json`, JSON.stringify(code.Code()));
-            this.storage.SaveItem(`Addresses/${address}/codeHash.json`, JSON.stringify(hash));
+            await this.storage.SaveItem(`Code/${code.Hash()}/code.json`, JSON.stringify(code.Code()));
+            await this.storage.SaveItem(`Addresses/${address}/codeHash.json`, JSON.stringify(hash));
         }
 
         return code;
