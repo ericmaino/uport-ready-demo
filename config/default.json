@@ -1,32 +1,32 @@
 {
-    "logging" : {
-        "ai" : ""
+    "logging": {
+        "ai": ""
     },
-    "storage" :{
-        "implementation" : "FileSystem",
-        "root" : "chain-data",
-        "azure" : {
-            "account" : "",
-            "key" : ""
+    "storage": {
+        "implementation": "FileSystem",
+        "root": "chain-data",
+        "azure": {
+            "account": "",
+            "key": ""
         }
     },
-    "serviceBus" : {
-        "namespace" : "chaindata",
-        "keyName" : "Send",
-        "topic" : "Test",
-        "key" : ""
+    "serviceBus": {
+        "namespace": "chaindata",
+        "keyName": "Send",
+        "topic": "Test",
+        "key": ""
     },
-    "test" : {
-        "account" : "0xcd2051a37cdc02db5da21d61415de21af4058a5e",
-        "contract" : {
-            "file" : "Test2.sol",
-            "name" : "Device",
-            "parameters" : {
+    "rpcUrl": "http://localhost:8545",
+    "startingBlock": "0",
+    "test": {
+        "account": "0xcd2051a37cdc02db5da21d61415de21af4058a5e",
+        "contract": {
+            "file": "Test2.sol",
+            "name": "Device",
+            "parameters": {
                 "deviceAddress": "",
                 "description": "Testing"
             }
         }
-    },
-    "rpcUrl" : "http://localhost:8545",
-    "startingBlock" : "7200"
+    }
 }

@@ -1,0 +1,32 @@
+{
+    "logging": {
+        "ai": "APPLICATION_INSIGHTS_KEY"
+    },
+    "storage": {
+        "implementation": "STORAGE_IMPLEMENTATION",
+        "root": "STORAGE_ROOT",
+        "azure": {
+            "account": "STORAGE_AZURE_ACCOUNT",
+            "key": "STORAGE_AZURE_ACCOUNT_KEY"
+        }
+    },
+    "serviceBus": {
+        "namespace": "SERVICE_BUS_NAMESPACE",
+        "keyName": "SERVICE_BUS_KEY_NAME",
+        "topic": "SERVICE_BUS_TOPIC",
+        "key": "SERVICE_BUS_KEY"
+    },
+    "rpcUrl": "RPC_URL",
+    "startingBlock": "STARTING_BLOCK",
+    "test": {
+        "account": "0xcd2051a37cdc02db5da21d61415de21af4058a5e",
+        "contract": {
+            "file": "Test2.sol",
+            "name": "Device",
+            "parameters": {
+                "deviceAddress": "",
+                "description": "Testing"
+            }
+        }
+    }
+}
