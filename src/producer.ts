@@ -2,11 +2,9 @@ import winston = require('winston');
 import solc = require('solc');
 import coder = require('web3/lib/solidity/coder');
 
+import * as Adapters from './adapters';
+
 import { LoggingConfiguration } from './modules/LoggingConfiguration';
-import { FileSystemStorage } from './adapters/FileSystemStorage';
-import { AzureBlobStorage } from './adapters/AzureBlobStorage';
-import { Sha256Notary } from './adapters/Sha256Notary';
-import { GenericIdentifier } from './adapters/GenericIdentifier';
 import { IIdentifier } from './interfaces/IIdentifier';
 import { INotary } from './interfaces/INotary';
 import { IStorage } from './interfaces/IStorage';
@@ -15,8 +13,13 @@ import { EthereumWeb3Adapter } from './Ethereum/web3/EthereumWeb3Adapter';
 import { EthereumTxInput } from './Ethereum/models/EthereumTxInput';
 import { EthereumAddress } from './Ethereum/models/EthereumAddress';
 import { EthereumEstimate } from './Ethereum/models/EthereumEstimate';
-import { SigningNotary } from './adapters/SigningNotary';
 import config = require('config');
+
+const AzureBlobStorage = Adapters.AzureBlobStorage;
+const FileSystemStorage = Adapters.FileSystemStorage;
+const Sha256Notary = Adapters.Sha256Notary;
+const SigningNotary = Adapters.SigningNotary;
+const GenericIdentifier = Adapters.GenericIdentifier;
 
 class Program {
     public static async Run() {

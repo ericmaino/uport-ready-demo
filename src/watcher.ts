@@ -1,19 +1,23 @@
 import winston = require('winston');
 
+import * as Adapters from './adapters';
+
 import { IStorage } from './interfaces/IStorage';
 import { LoggingConfiguration } from './modules/LoggingConfiguration';
 import { EthereumWeb3Adapter } from './Ethereum/web3/EthereumWeb3Adapter';
 import { EthereumWeb3AdapterStorageCache } from './Ethereum/web3/EthereumWeb3AdapterStorageCache';
-import { FileSystemStorage } from './adapters/FileSystemStorage';
-import { AzureBlobStorage } from './adapters/AzureBlobStorage';
-import { ConsoleEventBus } from './adapters/ConsoleEventBus';
-import { EventBusGroup } from './adapters/EventBusGroup';
-import { AzureServiceBusEventBus, ServiceBusConfig } from './adapters/AzureServiceBusEventBus';
 import { EthereumReader } from './Ethereum/EthereumReader';
 import { BlockDetailReader } from './Ethereum/readers/BlockDetailReader';
 import { EthereumWatcher } from './Ethereum/EthereumWatcher';
 import util = require('util');
 import config = require('config');
+
+const AzureBlobStorage = Adapters.AzureBlobStorage;
+const FileSystemStorage = Adapters.FileSystemStorage;
+const ServiceBusConfig = Adapters.ServiceBusConfig;
+const EventBusGroup = Adapters.EventBusGroup;
+const ConsoleEventBus = Adapters.ConsoleEventBus;
+const AzureServiceBusEventBus = Adapters.AzureServiceBusEventBus;
 
 class Program {
     public static async Run() {
