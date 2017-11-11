@@ -1,4 +1,3 @@
-export interface ISigningNotary
-{
-    Sign(rawTx: any) : Promise<string>;
+export interface ISigningNotary {
+    Sign(rawTx: any): Promise<string>;
 }

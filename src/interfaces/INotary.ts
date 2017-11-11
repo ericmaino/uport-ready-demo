@@ -1,4 +1,3 @@
-export interface INotary
-{
-    GetSignature(content: any) : string;
+export interface INotary {
+    GetSignature(content: any): string;
 }
