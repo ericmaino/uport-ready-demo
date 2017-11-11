@@ -1,25 +1,22 @@
 import winston = require('winston');
 import solc = require('solc');
+import config = require('config');
 import coder = require('web3/lib/solidity/coder');
 
-import * as Adapters from './adapters';
+import { LoggingConfiguration } from './modules';
+import { IWeb3Adapter, Ethereum } from './Ethereum';
+import { IBlockTracker, IIdentifier, INotary, IStorage } from './interfaces';
+import { EthereumTxInput, EthereumAddress, EthereumEstimate } from './Ethereum/models';
 
-import { LoggingConfiguration } from './modules/LoggingConfiguration';
-import { IIdentifier } from './interfaces/IIdentifier';
-import { INotary } from './interfaces/INotary';
-import { IStorage } from './interfaces/IStorage';
-import { IWeb3Adapter } from './Ethereum/IWeb3Adapter';
-import { EthereumWeb3Adapter } from './Ethereum/web3/EthereumWeb3Adapter';
-import { EthereumTxInput } from './Ethereum/models/EthereumTxInput';
-import { EthereumAddress } from './Ethereum/models/EthereumAddress';
-import { EthereumEstimate } from './Ethereum/models/EthereumEstimate';
-import config = require('config');
+import {
+    AzureBlobStorage,
+    FileSystemStorage,
+    Sha256Notary,
+    SigningNotary,
+    GenericIdentifier
+} from './adapters';
 
-const AzureBlobStorage = Adapters.AzureBlobStorage;
-const FileSystemStorage = Adapters.FileSystemStorage;
-const Sha256Notary = Adapters.Sha256Notary;
-const SigningNotary = Adapters.SigningNotary;
-const GenericIdentifier = Adapters.GenericIdentifier;
+const EthereumWeb3Adapter = Ethereum.Web3.EthereumWeb3Adapter;
 
 class Program {
     public static async Run() {
@@ -31,7 +28,7 @@ class Program {
 
         const notary = new Sha256Notary();
 
-        let fs : IStorage;
+        let fs: IStorage;
         if (storageConfig.implementation === 'FileSystem') {
             fs = new FileSystemStorage(storageConfig.root);
         } else {
@@ -45,7 +42,7 @@ class Program {
         const factory = new ContractFactory(web3, fs, notary);
         const fromAddress = new EthereumAddress(testConfig.account);
         const id = await factory.UploadAndVerify(rawContract);
-        const prepared = await factory.PrepareTransaction(fromAddress, id, testConfig.contract.name, testConfig.contract.parameters );
+        const prepared = await factory.PrepareTransaction(fromAddress, id, testConfig.contract.name, testConfig.contract.parameters);
         const signed = await signer.Sign(prepared);
         const receipt = await web3.SendSignedTx(signed);
         winston.debug(receipt);

@@ -2,22 +2,24 @@ import winston = require('winston');
 
 import * as Adapters from './adapters';
 
-import { IStorage } from './interfaces/IStorage';
-import { LoggingConfiguration } from './modules/LoggingConfiguration';
-import { EthereumWeb3Adapter } from './Ethereum/web3/EthereumWeb3Adapter';
-import { EthereumWeb3AdapterStorageCache } from './Ethereum/web3/EthereumWeb3AdapterStorageCache';
-import { EthereumReader } from './Ethereum/EthereumReader';
-import { BlockDetailReader } from './Ethereum/readers/BlockDetailReader';
-import { EthereumWatcher } from './Ethereum/EthereumWatcher';
+import { LoggingConfiguration } from './modules';
+import { IWeb3Adapter, Ethereum } from './Ethereum';
+import { IBlockTracker, IIdentifier, INotary, IStorage } from './interfaces';
+
+import {
+    AzureBlobStorage,
+    FileSystemStorage,
+    Sha256Notary,
+    SigningNotary,
+    GenericIdentifier,
+    ServiceBusConfig,
+    EventBusGroup,
+    ConsoleEventBus,
+    AzureServiceBusEventBus
+} from './adapters';
+
 import util = require('util');
 import config = require('config');
-
-const AzureBlobStorage = Adapters.AzureBlobStorage;
-const FileSystemStorage = Adapters.FileSystemStorage;
-const ServiceBusConfig = Adapters.ServiceBusConfig;
-const EventBusGroup = Adapters.EventBusGroup;
-const ConsoleEventBus = Adapters.ConsoleEventBus;
-const AzureServiceBusEventBus = Adapters.AzureServiceBusEventBus;
 
 class Program {
     public static async Run() {
@@ -26,8 +28,8 @@ class Program {
         const storageConfig = config.get('storage');
         const rpcUrl = config.get('rpcUrl');
         const startingBlock = config.get('startingBlock');
-        const web3Client = new EthereumWeb3Adapter(rpcUrl);
-        const networkId = EthereumReader.GetIdentity(web3Client);
+        const web3Client = new Ethereum.Web3.EthereumWeb3Adapter(rpcUrl);
+        const networkId = Ethereum.EthereumReader.GetIdentity(web3Client);
         const serviceBusConfig = new ServiceBusConfig(config.get("serviceBus"));
 
         const eventBus = new EventBusGroup();
@@ -50,10 +52,10 @@ class Program {
             constractStorage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, contractRoot);
         }
 
-        const fsCache = new EthereumWeb3AdapterStorageCache(web3Client, chiainStorage);
-        const ethClient = new EthereumReader(fsCache, constractStorage);
+        const fsCache = new Ethereum.Web3.EthereumWeb3AdapterStorageCache(web3Client, chiainStorage);
+        const ethClient = new Ethereum.EthereumReader(fsCache, constractStorage);
 
-        new EthereumWatcher(ethClient, chiainStorage, eventBus, startingBlock)
+        new Ethereum.EthereumWatcher(ethClient, chiainStorage, eventBus, startingBlock)
             .Monitor()
             .catch(err => winston.error(err));
     }

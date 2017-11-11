@@ -1,12 +1,14 @@
 import winston = require('winston');
+import { IReader, IBlockTracker } from './../../interfaces/';
 import { IEthereumReader } from './../IEthereumReader';
-import { IReader } from './../../interfaces/IReader';
-import { IBlockTracker } from './../../interfaces/IBlockTracker';
-import { EthereumBlockDetail } from './../models/EthereumBlock';
-import { EthereumTx } from './../models/EthereumTx';
-import { EthereumAddress } from './../models/EthereumAddress';
 import { BlockReader } from './BlockReader';
 import { TxReader } from './TxReader';
+
+import {
+    EthereumBlockDetail,
+    EthereumTx,
+    EthereumAddress
+} from './../models';
 
 export class BlockDetailReader {
     private eth: IEthereumReader;

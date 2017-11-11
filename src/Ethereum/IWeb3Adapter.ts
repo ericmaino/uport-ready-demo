@@ -1,6 +1,8 @@
-import { EthereumCode } from './models/EthereumCode';
-import { EthereumEstimate } from './models/EthereumEstimate';
-import { EthereumTxInput } from './models/EthereumTxInput';
+import {
+    EthereumCode,
+    EthereumTxInput,
+    EthereumEstimate
+} from './models';
 
 export interface IWeb3Adapter {
     GetCode(address: string): Promise<EthereumCode>;

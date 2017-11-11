@@ -1,9 +1,11 @@
 import winston = require('winston');
 import { IWeb3Adapter } from './../IWeb3Adapter';
 import { IStorage } from './../../interfaces/IStorage';
-import { EthereumCode } from './../models/EthereumCode';
-import { EthereumEstimate } from './../models/EthereumEstimate';
-import { EthereumTxInput } from './../models/EthereumTxInput';
+import {
+    EthereumCode,
+    EthereumEstimate,
+    EthereumTxInput
+} from './../models';
 
 export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
     private readonly baseClient: IWeb3Adapter;

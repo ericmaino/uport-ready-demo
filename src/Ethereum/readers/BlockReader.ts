@@ -1,7 +1,7 @@
 import winston = require('winston');
 import { IEthereumReader } from './../IEthereumReader';
-import { IBlockTracker } from './../../interfaces/IBlockTracker';
-import { EthereumBlock } from './../models/EthereumBlock';
+import { IBlockTracker } from './../../interfaces';
+import { EthereumBlock } from './../models';
 
 export class BlockReader {
     private readonly eth: IEthereumReader;

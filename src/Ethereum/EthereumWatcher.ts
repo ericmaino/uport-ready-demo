@@ -1,8 +1,6 @@
 import winston = require('winston');
 
-import { IStorage } from './../interfaces/IStorage';
-import { IEventBus } from './../interfaces/IEventBus';
-import { IBlockTracker } from './../interfaces/IBlockTracker';
+import { IStorage, IEventBus, IBlockTracker } from './../interfaces';
 import { IEthereumReader } from './IEthereumReader';
 import { BlockDetailReader } from './readers/BlockDetailReader';
 

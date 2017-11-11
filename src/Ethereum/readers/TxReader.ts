@@ -1,7 +1,7 @@
 import winston = require('winston');
 import { IEthereumReader } from './../IEthereumReader';
-import { EthereumBlock } from './../models/EthereumBlock';
-import { EthereumTx } from './../models/EthereumTx';
+import { EthereumBlock, EthereumTx } from './../models';
+
 
 export class TxReader {
     private eth: IEthereumReader;

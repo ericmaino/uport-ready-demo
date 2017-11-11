@@ -2,17 +2,11 @@ import winston = require('winston');
 import fs = require('fs');
 import path = require('path');
 
-import { IReader } from './../interfaces/IReader';
-import { IStorage } from './../interfaces/IStorage';
-
+import { IReader, IStorage } from './../interfaces';
+import { TraceReader } from './readers';
 import { IEthereumReader } from './IEthereumReader';
 import { IWeb3Adapter } from './IWeb3Adapter';
-import { EthereumBlock, EthereumBlockDetail } from './models/EthereumBlock';
-import { EthereumTx } from './models/EthereumTx';
-import { EthereumIdentity } from './models/EthereumIdentity';
-import { EthereumCode } from './models/EthereumCode';
-import { EthereumAddress } from './models/EthereumAddress';
-import { TraceReader } from './readers/TraceReader';
+import { EthereumAddress, EthereumBlock, EthereumBlockDetail, EthereumIdentity, EthereumCode, EthereumTx } from './models';
 
 export class EthereumReader implements IEthereumReader {
     private readonly baseClient: IWeb3Adapter;
@@ -46,7 +40,7 @@ export class EthereumReader implements IEthereumReader {
 
     public async GetData(address: EthereumAddress, block: EthereumBlock): Promise<any> {
         const abi = await this.GetAbi(address);
-        let data : any = {};
+        let data: any = {};
 
         if (abi) {
             data = await this.baseClient.ReadContract(address.AsHex(), abi, block.BlockNumber());

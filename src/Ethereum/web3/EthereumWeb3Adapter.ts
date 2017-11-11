@@ -1,11 +1,10 @@
 import Web3 = require('web3');
 import net = require('net');
 import winston = require('winston');
-import { JobQueue } from './../../modules/JobQueue';
+import { JobQueue } from './../../modules';
 import { IWeb3Adapter } from './../IWeb3Adapter';
-import { EthereumCode } from './../models/EthereumCode';
-import { EthereumEstimate } from './../models/EthereumEstimate';
-import { EthereumTxInput } from './../models/EthereumTxInput';
+import { EthereumAddress, EthereumEstimate, EthereumTxInput, EthereumCode } from './../models';
+
 
 export class EthereumWeb3Adapter implements IWeb3Adapter {
     private readonly web3: Web3;
@@ -24,7 +23,7 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
                 method: "debug_traceTransaction",
                 params: [txHash],
                 id: new Date().getTime()
-            }, function (err, result) {
+            }, function (err: any, result: any) {
                 if (err) {
                     reject(err);
                 } else {

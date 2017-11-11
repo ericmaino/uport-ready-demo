@@ -1,9 +1,7 @@
-export class EthereumAddress
-{
+export class EthereumAddress {
     private readonly content: string;
 
-    constructor(address)
-    {
+    constructor(address) {
         this.content = address;
     }
 
@@ -13,7 +11,7 @@ export class EthereumAddress
         return new EthereumAddress(address);
     }
 
-    public AsHex(): string{
+    public AsHex(): string {
         return this.content;
     }
 }
