@@ -158,10 +158,14 @@ class ContractFactory {
         winston.debug(`Persisting contract ${contractName}`);
         const contractSignature = this.notary.GetSignature(`0x${contract.runtimeBytecode}`);
         const contractPaths = this.paths.GetContractPaths(sourceSignature, contractSignature, contractName);
-        await this.storage.SaveItem(contractPaths.CompiledPath(), JSON.stringify(contract));
-        await this.storage.SaveItem(contractPaths.AbiPath(), JSON.stringify(JSON.parse(contract.interface)));
-        await this.storage.SaveItem(contractPaths.NamePath(), "");
-        await this.storage.SaveItem(contractPaths.SourceMapPath(), contractSignature);
+
+        const fileWrites = [
+            this.storage.SaveItem(contractPaths.CompiledPath(), JSON.stringify(contract)),
+            this.storage.SaveItem(contractPaths.AbiPath(), JSON.stringify(JSON.parse(contract.interface))),
+            this.storage.SaveItem(contractPaths.NamePath(), ""),
+            this.storage.SaveItem(contractPaths.SourceMapPath(), contractSignature)
+        ];
+        await Promise.all(fileWrites);
     }
 
     public async PrepareTransaction(address: EthereumAddress, id: IIdentifier, contractName: string, argumentPayload: any): Promise<any> {
@@ -193,8 +197,6 @@ class ContractFactory {
         const values = paramKeys.map(key => params[key]);
         return coder.encodeParams(types, values);
     }
-
-
 }
 
 Program.Run()
