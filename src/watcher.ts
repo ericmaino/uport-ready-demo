@@ -4,7 +4,7 @@ import * as Adapters from './adapters';
 
 import { LoggingConfiguration } from './modules';
 import { IWeb3Adapter, Ethereum } from './Ethereum';
-import { IBlockTracker, IIdentifier, INotary, IStorage } from './interfaces';
+import { IBlockTracker, IIdentifier, INotary, IStorage, IEventBus } from './interfaces';
 
 import {
     AzureBlobStorage,
@@ -23,15 +23,27 @@ import config = require('config');
 
 class Program {
     public static async Run() {
+        await Program.WatchChain(config.get('rpcUrl'), config.get('startingBlock'));
+    }
+
+    public static async WatchChain(rpcUrl: string, startingBlock: number) {
         LoggingConfiguration.initialize(null);
 
         const storageConfig = config.get('storage');
-        const rpcUrl = config.get('rpcUrl');
-        const startingBlock = config.get('startingBlock');
         const web3Client = new Ethereum.Web3.EthereumWeb3Adapter(rpcUrl);
-        const networkId = Ethereum.EthereumReader.GetIdentity(web3Client);
-        const serviceBusConfig = new ServiceBusConfig(config.get("serviceBus"));
+        const networkId = await Ethereum.EthereumReader.GetIdentity(web3Client);
+        const eventBus = Program.GetEventBus(new ServiceBusConfig(config.get('serviceBus')));
+        const chiainStorage = Program.GetChainStorage(storageConfig, networkId);
+        const constractStorage = Program.GetContractStorage(storageConfig);
+        const fsCache = new Ethereum.Web3.EthereumWeb3AdapterStorageCache(web3Client, chiainStorage);
+        const ethClient = new Ethereum.EthereumReader(fsCache, constractStorage);
 
+        new Ethereum.EthereumWatcher(ethClient, chiainStorage, eventBus, startingBlock)
+            .Monitor()
+            .catch(err => winston.error(err));
+    }
+
+    private static GetEventBus(serviceBusConfig: ServiceBusConfig): IEventBus {
         const eventBus = new EventBusGroup();
         eventBus.AddEventBus(new ConsoleEventBus());
 
@@ -39,25 +51,29 @@ class Program {
             eventBus.AddEventBus(new AzureServiceBusEventBus(serviceBusConfig));
         }
 
-        let chiainStorage: IStorage;
-        let constractStorage: IStorage;
-        const storageRoot = `${storageConfig.root}/${(await networkId).AsString()}`;
-        const contractRoot = `${storageConfig.root}/Contracts`;
+        return eventBus;
+    }
+
+    private static GetChainStorage(storageConfig: any, networkId: IIdentifier): IStorage {
+        const chainRoot = `${storageConfig.root}/${networkId.AsString()}`;
+        return Program.GetStorage(chainRoot, storageConfig);
+    }
+
+    private static GetContractStorage(storageConfig: any): IStorage {
+        const chainRoot = `${storageConfig.root}/Contracts`;
+        return Program.GetStorage(chainRoot, storageConfig);
+    }
+
+    private static GetStorage(storageRoot: string, storageConfig: any): IStorage {
+        let storage: IStorage;
 
         if (storageConfig.implementation === 'FileSystem') {
-            chiainStorage = new FileSystemStorage(storageRoot);
-            constractStorage = new FileSystemStorage(contractRoot);
+            storage = new FileSystemStorage(storageRoot);
         } else {
-            chiainStorage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, storageRoot);
-            constractStorage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, contractRoot);
+            storage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, storageRoot);
         }
 
-        const fsCache = new Ethereum.Web3.EthereumWeb3AdapterStorageCache(web3Client, chiainStorage);
-        const ethClient = new Ethereum.EthereumReader(fsCache, constractStorage);
-
-        new Ethereum.EthereumWatcher(ethClient, chiainStorage, eventBus, startingBlock)
-            .Monitor()
-            .catch(err => winston.error(err));
+        return storage;
     }
 }
 
