@@ -17,16 +17,5 @@
         "key": "SERVICE_BUS_KEY"
     },
     "rpcUrl": "RPC_URL",
-    "startingBlock": "STARTING_BLOCK",
-    "test": {
-        "account": "0xcd2051a37cdc02db5da21d61415de21af4058a5e",
-        "contract": {
-            "file": "Test2.sol",
-            "name": "Device",
-            "parameters": {
-                "deviceAddress": "",
-                "description": "Testing"
-            }
-        }
-    }
+    "startingBlock": "STARTING_BLOCK"
 }
