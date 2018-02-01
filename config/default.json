@@ -28,13 +28,13 @@
     },
     "rpcUrl": "http://40.84.155.75:8545",
     "startingBlock" : "0",
-    "test": {
+    "setup" : {
         "account": "0xccd3d65eeaae82d668a3c1b39714f2d01a247eb5",
+        "secret" : "Blockchain",
         "contract": {
-            "file": "AttestedEvent.sol",
-            "name": "AttestedEvent",
+            "file": "UPortEventDemo.sol",
+            "name": "EventDemo",
             "parameters": {
-                "owner" : "0x43cf9074fc324eba55e03ef576d2e0f4e18bb3dc"
             }
         }
     }

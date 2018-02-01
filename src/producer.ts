@@ -41,11 +41,11 @@ class Program {
 
 
     public async Run() {
-        const testConfig = config.get('test');
-        const signer = new SigningNotary(this.storage, testConfig.secret);
+        const demoConfig = config.get('setup');
+        const signer = new SigningNotary(this.storage, demoConfig.secret);
 
-        const rawContract = (await this.storage.ReadItem(testConfig.contract.file));
-        await this.DeployContract(rawContract, testConfig.contract.name, testConfig.contract.parameters, testConfig.account, signer);
+        const rawContract = (await this.storage.ReadItem(demoConfig.contract.file));
+        await this.DeployContract(rawContract, demoConfig.contract.name, demoConfig.contract.parameters, demoConfig.account, signer);
     }
 
     public async DeployContract(rawContract: string, contractName: string, contractParams: any, account: string, signer: ISigningNotary) {
