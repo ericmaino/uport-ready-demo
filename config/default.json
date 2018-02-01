@@ -16,16 +16,15 @@
         "topic": "Test",
         "key": ""
     },
-    "rpcUrl": "http://localhost:8545",
-    "startingBlock": "0",
+    "rpcUrl": "http://40.84.155.75:8545",
+    "startingBlock": "1690753",
     "test": {
-        "account": "0xcd2051a37cdc02db5da21d61415de21af4058a5e",
+        "account": "0xccd3d65eeaae82d668a3c1b39714f2d01a247eb5",
         "contract": {
-            "file": "Test2.sol",
-            "name": "Device",
+            "file": "AttestedEvent.sol",
+            "name": "AttestedEvent",
             "parameters": {
-                "deviceAddress": "",
-                "description": "Testing"
+                "owner" : "0x43cf9074fc324eba55e03ef576d2e0f4e18bb3dc"
             }
         }
     }
