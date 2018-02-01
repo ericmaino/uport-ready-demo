@@ -16,8 +16,17 @@
         "topic": "Test",
         "key": ""
     },
+    "uport" : {
+        "callbackRoot" : "https://254e6b49.ngrok.io",
+        "app": {
+            "name": "Eric's Demo",
+            "id": "2oj4NvuUVtPsCJAf3Kb2R9LoEG9p7XLjcmV",
+            "secret": "ec3619e8e2ff62f5a1ecab500c97ef606835ab46061a506ecc4ec8bc08e4f263"
+        },
+        "network": "0x4",
+        "contractAddress": "0x74a51450c48dd198ab71c8d01449288690bfe469"
+    },
     "rpcUrl": "http://40.84.155.75:8545",
-    "startingBlock": "1690753",
     "test": {
         "account": "0xccd3d65eeaae82d668a3c1b39714f2d01a247eb5",
         "contract": {

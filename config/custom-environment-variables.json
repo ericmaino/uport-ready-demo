@@ -17,5 +17,15 @@
         "key": "SERVICE_BUS_KEY"
     },
     "rpcUrl": "RPC_URL",
-    "startingBlock": "STARTING_BLOCK"
+    "startingBlock": "STARTING_BLOCK",
+    "uport" : {
+        "callbackRoot" : "UPORT_CALLBACK_ROOT",
+        "app": {
+            "name": "UPORT_APP_NAME",
+            "id": "UPORT_APP_ID",
+            "secret": "UPORT_APP_SECRET"
+        },
+        "network": "UPORT_NETWORK",
+        "contractAddress": "UPORT_CONTRACT_ADDRESS"
+    }
 }

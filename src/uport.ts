@@ -2,6 +2,8 @@ import express = require('express');
 import winston = require('winston');
 import jsontokens = require('jsontokens');
 import bodyParser = require('body-parser');
+import config = require('config');
+
 import { LoggingConfiguration, ContractFactory } from './modules';
 import { UPortFactory, UPortCredentialFactory } from './modules/uPort';
 
@@ -10,28 +12,18 @@ const app = express();
 app.set('port', process.env.PORT || process.env.APPSETTING_PORT || 8081);
 
 app.use(bodyParser.json({ type: '*/*' }));
-const config = {
-    attestCallback: 'https://254e6b49.ngrok.io/attest',
-    callback: 'https://254e6b49.ngrok.io/callback',
-    app: {
-        name: 'Eric\'s Demo',
-        id: '2oj4NvuUVtPsCJAf3Kb2R9LoEG9p7XLjcmV',
-        secret: 'ec3619e8e2ff62f5a1ecab500c97ef606835ab46061a506ecc4ec8bc08e4f263'
-    },
-    network: '0x4',
-    contractAddress: '0x74a51450c48dd198ab71c8d01449288690bfe469'
-};
+const uportConfig = config.get("uport");
 
 class TopicFactory {
     public static DoWork(name: string): any {
         winston.debug('Topic ' + name);
         return {
-            url: config.callback
+            url: uportConfig.callback
         };
     }
 }
-const cFactory = new UPortCredentialFactory(config.app.name, config.app.id, config.app.secret, TopicFactory.DoWork);
-const uFactory = new UPortFactory(config.app.name, config.network);
+const cFactory = new UPortCredentialFactory(uportConfig.app.name, uportConfig.app.id, uportConfig.app.secret, TopicFactory.DoWork);
+const uFactory = new UPortFactory(uportConfig.app.name, uportConfig.network);
 
 class UI {
 
@@ -43,7 +35,7 @@ class UI {
 }
 
 app.get('/', async function (req: any, res: any) {
-    const uri = await cFactory.GenerateClaimsRequest(['name', 'avatar'], config.callback, Math.floor(new Date().getTime() / 1000) + 300);
+    const uri = await cFactory.GenerateClaimsRequest(['name', 'avatar'], `${uportConfig.rootCallback}/callback`, Math.floor(new Date().getTime() / 1000) + 300);
     UI.GenerateQRCode(res, uri);
 });
 
@@ -56,12 +48,11 @@ app.post('/callback', async function (req: any, res: any) {
 
     //const uri = await cFactory.Attest(data.address, { Test: "Testing" }, config.attestCallback);
 
-    const uri = uFactory.GenerateFunctionCallUri(config.contractAddress, 'Register', [], config.callback);
+    const uri = uFactory.GenerateFunctionCallUri(uportConfig.contractAddress, 'Register', [], `${uportConfig.rootCallback}/callback`);
     winston.debug(uri);
     await cFactory.Push(data.pushToken, data.publicEncKey, {
         url: uri
     });
-    
 });
 
 app.post('/attest', async function (req: any, res: any) {
