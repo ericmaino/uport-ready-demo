@@ -76,4 +76,8 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
     public async GetBalance(address: string): Promise<number> {
         return this.baseClient.GetBalance(address);
     }
+
+    public async WaitForTx(txHash: string): Promise<any> {
+        return this.baseClient.WaitForTx(txHash);
+    }
 }

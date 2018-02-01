@@ -16,4 +16,5 @@ export interface IWeb3Adapter {
     EstimateTx(tx: EthereumTxInput) : Promise<EthereumEstimate>;
     PrepareEstimatedTx(tx: EthereumEstimate) : Promise<any>;
     SendSignedTx(txBytesAsHex: string) : Promise<string>;
+    WaitForTx(txHash: string) : Promise<any>;
 }

@@ -1,7 +1,7 @@
 import Web3 = require('web3');
 import net = require('net');
 import winston = require('winston');
-import { JobQueue } from './../../modules';
+import { JobQueue, Task } from './../../modules';
 import { IWeb3Adapter } from './../IWeb3Adapter';
 import { EthereumAddress, EthereumEstimate, EthereumTxInput, EthereumCode } from './../models';
 
@@ -160,6 +160,19 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
                 }
             });
         }));
+    }
+
+    public async WaitForTx(txHash: string): Promise<any> {
+        let tx: any = null;
+        while (tx == null) {
+            tx = await this.GetTransaction(txHash);
+
+            if (tx == null) {
+                await Task.Wait(1000);
+            }
+        }
+
+        return tx;
     }
 
     public async GetBalance(address: string): Promise<number> {
