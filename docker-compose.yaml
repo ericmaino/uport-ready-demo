@@ -3,9 +3,9 @@ services:
   watcher:
     image: eth-base
     restart: always
-    command: node watcher.js
+    entrypoint: node watcher.js
   uport-service:
     image: eth-base
     restart: always
-    command: node uport.js
+    entrypoint: node uport.js
  
