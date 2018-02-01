@@ -18,7 +18,6 @@ const EthereumWeb3Adapter = Ethereum.Web3.EthereumWeb3Adapter;
 
 class Program {
     private readonly web3: IWeb3Adapter;
-    private readonly signer: ISigningNotary;
     private readonly factory: ContractFactory;
     private readonly storage: IStorage;
 
@@ -36,7 +35,6 @@ class Program {
             this.storage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, storageConfig.root);
         }
 
-        this.signer = new SigningNotary(this.storage);
         this.web3 = new EthereumWeb3Adapter(rpcUrl);
         this.factory = new ContractFactory(this.web3, this.storage, notary);
     }
@@ -44,15 +42,18 @@ class Program {
 
     public async Run() {
         const testConfig = config.get('test');
+        const signer = new SigningNotary(this.storage, testConfig.secret);
+
         const rawContract = (await this.storage.ReadItem(testConfig.contract.file));
-        await this.DeployContract(rawContract, testConfig.contract.name, testConfig.contract.parameters, testConfig.account);
+        await this.DeployContract(rawContract, testConfig.contract.name, testConfig.contract.parameters, testConfig.account, signer);
     }
 
-    public async DeployContract(rawContract: string, contractName: string, contractParams: any, account: string) {
+    public async DeployContract(rawContract: string, contractName: string, contractParams: any, account: string, signer: ISigningNotary) {
         const fromAddress = new EthereumAddress(account);
         const id = await this.factory.UploadAndVerify(rawContract);
-        const prepared = await this.factory.PrepareTransaction(fromAddress, id, contractName, contractParams);
-        const signed = await this.signer.Sign(prepared);
+        const constructor = null;
+        const prepared = await this.factory.PrepareTransaction(fromAddress, id, contractName, constructor, contractParams);
+        const signed = await signer.Sign(prepared);
         const receipt = await this.web3.SendSignedTx(signed);
         winston.debug(receipt);
     }

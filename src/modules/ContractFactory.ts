@@ -52,24 +52,27 @@ export class ContractFactory {
 
     private async WriteContractData(sourceSignature: string, contract: any, contractName: string): Promise<void> {
         winston.debug(`Persisting contract ${contractName}`);
-        const contractSignature = this.notary.GetSignature(`0x${contract.runtimeBytecode}`);
-        const contractPaths = this.paths.GetContractPaths(sourceSignature, contractSignature, contractName);
+        const runtimeByteCode = `0x${contract.runtimeBytecode}`;
+        const byteCode = `0x${contract.bytecode}`;
+        const byteSignature = this.notary.GetSignature(runtimeByteCode);
+        const contractPaths = this.paths.GetContractPaths(sourceSignature, byteSignature, contractName);
 
         const fileWrites = [
             this.storage.SaveItem(contractPaths.CompiledPath(), JSON.stringify(contract)),
             this.storage.SaveItem(contractPaths.AbiPath(), JSON.stringify(JSON.parse(contract.interface))),
             this.storage.SaveItem(contractPaths.NamePath(), ""),
-            this.storage.SaveItem(contractPaths.SourceMapPath(), contractSignature)
+            this.storage.SaveItem(contractPaths.RuntimeBytecodePath(), JSON.stringify(runtimeByteCode)),
+            this.storage.SaveItem(contractPaths.BytecodePath(), JSON.stringify(byteCode)),
+            this.storage.SaveItem(contractPaths.SourceMapPath(), byteSignature)
         ];
         await Promise.all(fileWrites);
     }
 
-    public async PrepareTransaction(address: Ethereum.Models.EthereumAddress, id: IIdentifier, contractName: string, argumentPayload: any): Promise<any> {
+    public async PrepareTransaction(address: Ethereum.Models.EthereumAddress, id: IIdentifier, contractName: string, method: string, argumentPayload: any): Promise<any> {
         const contractPath = await this.paths.GetCompiledPath(id.AsString(), contractName);
         const contract = JSON.parse(await this.storage.ReadItem(contractPath));
         const abi = JSON.parse(contract.interface);
-        const constructor: string = null;
-        const encodedParams = this.EncodeContractParameters(abi, argumentPayload, constructor);
+        const encodedParams = this.EncodeContractParameters(abi, argumentPayload, method);
         const rawTx = new Ethereum.Models.EthereumTxInput(address, contract.bytecode, encodedParams);
         const estimate = await this.web3.EstimateTx(rawTx);
         return await this.web3.PrepareEstimatedTx(estimate);
