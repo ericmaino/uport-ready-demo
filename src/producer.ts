@@ -54,8 +54,12 @@ class Program {
         const constructor = null;
         const prepared = await this.factory.PrepareTransaction(fromAddress, id, contractName, constructor, contractParams);
         const signed = await signer.Sign(prepared);
+        winston.debug('Submitting transaction');
         const receipt = await this.web3.SendSignedTx(signed);
         winston.debug(receipt);
+        winston.debug('Waiting for transaction to be mined');
+        const r = await this.web3.WaitForTx(receipt);
+        winston.debug(r.contractAddress);
     }
 }
 
