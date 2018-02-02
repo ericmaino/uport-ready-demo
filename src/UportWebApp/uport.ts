@@ -35,7 +35,7 @@ class UI {
 }
 
 app.get('/', async function (req: any, res: any) {
-    const uri = await cFactory.GenerateClaimsRequest(['name', 'avatar'], `${uportConfig.rootCallback}/callback`, Math.floor(new Date().getTime() / 1000) + 300);
+    const uri = await cFactory.GenerateClaimsRequest(['name', 'avatar'], `${uportConfig.callbackRoot}/callback`, Math.floor(new Date().getTime() / 1000) + 300);
     UI.GenerateQRCode(res, uri);
 });
 
@@ -48,7 +48,7 @@ app.post('/callback', async function (req: any, res: any) {
 
     //const uri = await cFactory.Attest(data.address, { Test: "Testing" }, config.attestCallback);
 
-    const uri = uFactory.GenerateFunctionCallUri(uportConfig.contractAddress, 'Register', [], `${uportConfig.rootCallback}/callback`);
+    const uri = uFactory.GenerateFunctionCallUri(uportConfig.contractAddress, 'Register', [], `${uportConfig.callbackRoot}/callback`);
     winston.debug(uri);
     await cFactory.Push(data.pushToken, data.publicEncKey, {
         url: uri
@@ -61,7 +61,7 @@ app.post('/attest', async function (req: any, res: any) {
 
 const server = app.listen(app.get('port'), function () {
     winston.info(`Tutorial app running... Port ${app.get('port')}`);
-    winston.info(`Callback URL: ${uportConfig.rootCallback}`);
+    winston.info(`Callback URL: ${uportConfig.callbackRoot}`);
     winston.info(`Contract Address: ${uportConfig.contractAddress}`);
 });
 
