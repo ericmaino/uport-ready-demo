@@ -6,6 +6,5 @@ RUN npm install --production
 
 COPY release ./
 COPY config ./config
-COPY demo ./demo
 
 ENTRYPOINT [ "/bin/bash" ]
