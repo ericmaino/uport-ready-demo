@@ -31,10 +31,11 @@ class UportApp {
     private readonly contractAddress: string;
 
     constructor(uportConfig: any, storageConfig: any) {
+        const storageRoot = `${storageConfig.root}/tokens`;
         if (storageConfig.implementation === 'FileSystem') {
-            this.storage = new FileSystemStorage(storageConfig.root);
+            this.storage = new FileSystemStorage(storageRoot);
         } else {
-            this.storage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, storageConfig.root);
+            this.storage = new AzureBlobStorage(storageConfig.azure.account, storageConfig.azure.key, storageRoot);
         }
 
         this.uport = new UPortFactory(uportConfig.app.name, uportConfig.network, uportConfig.app.id, uportConfig.app.secret);
@@ -42,15 +43,23 @@ class UportApp {
         this.contractAddress = uportConfig.contractAddress;
     }
 
-    public async GenerateQRCode(res: any) {
-        const uri = await this.uport.GenerateClaimsRequest(['name', 'avatar'], `${this.callbackRoot}/register`, Math.floor(new Date().getTime() / 1000) + 300);
+    public async GenerateQRCode(res: any, callback: string) {
+        const uri = await this.uport.GenerateClaimsRequest(['name', 'avatar'], `${callback}`, Math.floor(new Date().getTime() / 1000) + 300);
         UI.GenerateQRCode(res, uri);
+    }
+
+    public async GenerateRegistrationQRCode(res: any) {
+        await this.GenerateQRCode(res, `${this.callbackRoot}/register`);
+    }
+
+    public async GenerateCompletionQRCode(res: any) {
+        await this.GenerateQRCode(res, `${this.callbackRoot}/attestcomplete`);
     }
 
     public async RequestRegistration(jwt: any) {
         const data = await this.uport.ReadToken(jwt);
-        this.storage.SaveItem(data.address, JSON.stringify(data));
-        const uri = this.uport.GenerateFunctionCallUri(this.contractAddress, 'Register', [], `${this.callbackRoot}/attest?address=${data.address}`);
+        this.storage.SaveItem(`${data.address}.json`, JSON.stringify(data));
+        const uri = this.uport.GenerateFunctionCallUri(this.contractAddress, 'Register', [], `${this.callbackRoot}/attestregistration?address=${data.address}`);
 
         winston.info(`Notify ${data.address} to Register`);
         await this.uport.Push(data.pushToken, data.publicEncKey, {
@@ -58,10 +67,19 @@ class UportApp {
         });
     }
 
-    public async RespondWithAttestation(txHash: string, address: string) {
-        const data = JSON.parse(await this.storage.ReadItem(address));
-        const uri = await this.uport.Attest(data.address, { Session: "CD-ARC303" }, config.attestCallback);
-        winston.info(`Push attestation`);
+    public async RespondWithRegistration(txHash: string, address: string) {
+        const data = JSON.parse(await this.storage.ReadItem(`${address}.json`));
+        await this.RespondWithAttestation(data, "Attended");
+    }
+
+    public async RespondWithCompletion(jwt: any) {
+        const data = await this.uport.ReadToken(jwt);
+        await this.RespondWithAttestation(data, "Completed");
+    }
+
+    public async RespondWithAttestation(data: any, action: string) {
+        const uri = await this.uport.Attest(data.address, { Session: "CD-ARC303", Action: action }, `${this.callbackRoot}/attested`);
+        winston.info(`Push ${action} Attestation`);
         await this.uport.Push(data.pushToken, data.publicEncKey, {
             url: uri
         });
@@ -73,15 +91,27 @@ class UportApp {
         app.use(bodyParser.json({ type: '*/*' }));
 
         app.get('/', async function (req: any, res: any) {
-            await _self.GenerateQRCode(res);
+            await _self.GenerateRegistrationQRCode(res);
+        });
+
+        app.get('/completed', async function (req: any, res: any) {
+            await _self.GenerateCompletionQRCode(res);
         });
 
         app.post('/register', async function (req: any, res: any) {
             await _self.RequestRegistration(req.body.access_token);
         });
 
-        app.post('/attest', async function (req: any, res: any) {
-            await _self.RespondWithAttestation(req.body.tx, req.query.address);
+        app.post('/attestregistration', async function (req: any, res: any) {
+            await _self.RespondWithRegistration(req.body.tx, req.query.address);
+        });
+
+        app.post('/attestcomplete', async function (req: any, res: any) {
+            await _self.RespondWithCompletion(req.body.access_token);
+        });
+
+        app.post('/attested', async function (req: any, res: any) {
+            winston.info(req.body);
         });
 
         const server = app.listen(app.get('port'), function () {
