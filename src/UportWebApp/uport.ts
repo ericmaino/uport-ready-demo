@@ -35,21 +35,16 @@ class UI {
 }
 
 app.get('/', async function (req: any, res: any) {
-    const uri = await cFactory.GenerateClaimsRequest(['name', 'avatar'], `${uportConfig.callbackRoot}/callback`, Math.floor(new Date().getTime() / 1000) + 300);
+    const uri = await cFactory.GenerateClaimsRequest(['name', 'avatar'], `${uportConfig.callbackRoot}/register`, Math.floor(new Date().getTime() / 1000) + 300);
     UI.GenerateQRCode(res, uri);
 });
 
-app.post('/callback', async function (req: any, res: any) {
+app.post('/register', async function (req: any, res: any) {
     const jwt = req.body.access_token;
-    winston.info(req.body);
     const data = await cFactory.ReadToken(jwt);
-    winston.info(data);
-    const callerAddress = uFactory.DecodeId(data.address).address;
+    const uri = uFactory.GenerateFunctionCallUri(uportConfig.contractAddress, 'Register', [], `${uportConfig.callbackRoot}/attest?address=${data.address}`);
 
-    //const uri = await cFactory.Attest(data.address, { Test: "Testing" }, config.attestCallback);
-
-    const uri = uFactory.GenerateFunctionCallUri(uportConfig.contractAddress, 'Register', [], `${uportConfig.callbackRoot}/callback`);
-    winston.debug(uri);
+    winston.info(`Notify ${data.address} to Register`);
     await cFactory.Push(data.pushToken, data.publicEncKey, {
         url: uri
     });
@@ -57,6 +52,9 @@ app.post('/callback', async function (req: any, res: any) {
 
 app.post('/attest', async function (req: any, res: any) {
     winston.info(req.body);
+    //const uri = await cFactory.Attest(data.address, { Test: "Testing" }, config.attestCallback);
+
+    winston.info(`Push attestation`);
 });
 
 const server = app.listen(app.get('port'), function () {
