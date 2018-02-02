@@ -1,10 +1,10 @@
 import winston = require('winston');
 
-import * as Adapters from './adapters';
+import * as Adapters from './../lib/adapters';
 
-import { LoggingConfiguration } from './modules';
-import { IWeb3Adapter, Ethereum } from './Ethereum';
-import { IBlockTracker, IIdentifier, INotary, IStorage, IEventBus } from './interfaces';
+import { LoggingConfiguration } from './../lib/modules';
+import { IWeb3Adapter, Ethereum } from './../lib/Ethereum';
+import { IBlockTracker, IIdentifier, INotary, IStorage, IEventBus } from './../lib/interfaces';
 
 import {
     AzureBlobStorage,
@@ -16,7 +16,7 @@ import {
     EventBusGroup,
     ConsoleEventBus,
     AzureServiceBusEventBus
-} from './adapters';
+} from './../lib/adapters';
 
 import util = require('util');
 import config = require('config');

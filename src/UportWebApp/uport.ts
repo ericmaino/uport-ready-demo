@@ -4,8 +4,8 @@ import jsontokens = require('jsontokens');
 import bodyParser = require('body-parser');
 import config = require('config');
 
-import { LoggingConfiguration, ContractFactory } from './modules';
-import { UPortFactory, UPortCredentialFactory } from './modules/uPort';
+import { LoggingConfiguration, ContractFactory } from './../lib/modules';
+import { UPortFactory, UPortCredentialFactory } from './../lib/modules/uPort';
 
 LoggingConfiguration.initialize(null);
 const app = express();

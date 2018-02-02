@@ -1,10 +1,10 @@
 import winston = require('winston');
 import config = require('config');
 
-import { LoggingConfiguration, ContractFactory } from './modules';
-import { IWeb3Adapter, Ethereum } from './Ethereum';
-import { IIdentifier, ISigningNotary, IStorage } from './interfaces';
-import { EthereumTxInput, EthereumAddress, EthereumEstimate } from './Ethereum/models';
+import { LoggingConfiguration, ContractFactory } from './../lib/modules';
+import { IWeb3Adapter, Ethereum } from './../lib/Ethereum';
+import { IIdentifier, ISigningNotary, IStorage } from './../lib/interfaces';
+import { EthereumTxInput, EthereumAddress, EthereumEstimate } from './../lib/Ethereum/models';
 
 import {
     AzureBlobStorage,
@@ -12,7 +12,7 @@ import {
     Sha256Notary,
     SigningNotary,
     GenericIdentifier
-} from './adapters';
+} from './../lib/adapters';
 
 const EthereumWeb3Adapter = Ethereum.Web3.EthereumWeb3Adapter;
 
