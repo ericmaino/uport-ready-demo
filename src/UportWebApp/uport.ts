@@ -76,13 +76,11 @@ class UportApp {
     public async RespondWithCompletion(jwt: any) {
         const data = await this.uport.ReadToken(jwt);
         const identityAddress = this.uport.DecodeId(data.address).address;
-
-        winston.info(identityAddress);
         const instance = await this.ethereum.GetContractInstance(new Ethereum.Models.EthereumAddress(this.contractAddress));
-        winston.debug(instance);
         const registered: boolean = instance.Participants(`${identityAddress}`);
 
         if (registered) {
+            winston.info(`Notify ${data.name} of Completion`);
             await this.RespondWithAttestation(data, "Completed");
         }
     }
