@@ -16,7 +16,7 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
         this.storage = storage;
     }
 
-    public async GetBlock(identifier: number): Promise<any> {
+    public async GetBlock(identifier: any): Promise<any> {
         const block = await this.baseClient.GetBlock(identifier);
         await this.storage.SaveItem(`Blocks/${block.number}/block.json`, JSON.stringify(block));
         return block;

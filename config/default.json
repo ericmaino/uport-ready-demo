@@ -27,7 +27,7 @@
         "contractAddress": "0x74a51450c48dd198ab71c8d01449288690bfe469"
     },
     "rpcUrl": "http://40.84.155.75:8545",
-    "startingBlock" : "0",
+    "startingBlock" : "latest",
     "setup" : {
         "account": "0xccd3d65eeaae82d668a3c1b39714f2d01a247eb5",
         "secret" : "Blockchain",
