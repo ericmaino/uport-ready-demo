@@ -5,8 +5,15 @@ import { Connect, Credentials, SimpleSigner, MNID } from 'uport-connect';
 export class UPortFactory {
     private readonly appName: string;
     private readonly networkId: string;
+    private readonly credentials: Credentials;
 
-    public constructor(appName: string, networkId: string) {
+    public constructor(appName: string, networkId: string, identifer: string, key: string) {
+        const signer = SimpleSigner(key);
+        this.credentials = new Credentials({
+            appName: appName,
+            address: identifer,
+            signer: signer
+        });
         this.appName = appName;
         this.networkId = networkId;
     }
@@ -27,40 +34,6 @@ export class UPortFactory {
         const encodedArgs = `function=${functionName}(${paramString})&callback_url=${callbackUrl}`;
         const uri = `me.uport:${contractId}?${encodedArgs}`;
         return uri;
-    }
-
-    public async GenerateClaimsRequest(claims: Array<string>, callbackUrl: string, expiration: number): Promise<string> {
-        //exp: Math.floor(new Date().getTime() / 1000) + 300
-        const requestToken = await Credentials.createRequest({
-            requested: claims,
-            callbackUrl: callbackUrl,
-            exp: expiration
-        });
-
-        return 'me.uport:me?requestToken=' + requestToken;
-    }
-
-    public EncodeId(contractAddress: string): string {
-        return MNID.encode({ network: this.networkId, address: contractAddress });
-    }
-
-    public DecodeId(encodedId: string): any {
-        return MNID.decode(encodedId);
-    }
-}
-
-export class UPortCredentialFactory {
-    private readonly credentials: Credentials;
-    private readonly connect: Connect;
-
-    public constructor(appName: string, identifer: string, key: string, topicFactory: any) {
-        const signer = SimpleSigner(key);
-        this.credentials = new Credentials({
-            appName: appName,
-            address: identifer,
-            signer: signer
-        });
-        this.connect = new Connect(appName, { credentials: this.credentials, topicFactory: topicFactory });
     }
 
     public async GenerateClaimsRequest(claims: Array<string>, callbackUrl: string, expiration: number): Promise<string> {
@@ -90,6 +63,14 @@ export class UPortCredentialFactory {
         };
         const jwt = await this.credentials.attest(att);
         return `me.uport:add?attestations=${encodeURIComponent(jwt)}&callback_url=${encodeURIComponent(callbackUrl)}`;
+    }
+
+    public EncodeId(contractAddress: string): string {
+        return MNID.encode({ network: this.networkId, address: contractAddress });
+    }
+
+    public DecodeId(encodedId: string): any {
+        return MNID.decode(encodedId);
     }
 }
 
