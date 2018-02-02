@@ -1,0 +1,11 @@
+version: '3'
+services:
+  contractSetup:
+    environment:
+      - RPC_URL=${RPC_URL}
+      - STORAGE_ROOT=/var/blockchain-data
+    image: eth-base
+    volumes:
+      - ./demo:/var/blockchain-data
+    entrypoint: node ContractSetup/contractSetup.js
+  

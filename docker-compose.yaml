@@ -3,9 +3,23 @@ services:
   watcher:
     image: eth-base
     restart: always
+    environment:
+      - RPC_URL=${RPC_URL}
+      - STORAGE_ROOT=/var/blockchain-data
+    volumes:
+      - ./demo:/var/blockchain-data
     entrypoint: node BlockchainWatcher/watcher.js
   uport-service:
     image: eth-base
     restart: always
+    environment:
+      - RPC_URL=${RPC_URL}
+      - STORAGE_ROOT=/var/blockchain-data
+      - UPORT_CALLBACK_ROOT=${NGROK_HTTPS}
+      - UPORT_CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+    volumes:
+      - ./demo:/var/blockchain-data
+    ports:
+      - 8081:8081
     entrypoint: node UportWebApp/uport.js
  
