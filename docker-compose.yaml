@@ -3,9 +3,9 @@ services:
   watcher:
     image: eth-base
     restart: always
-    entrypoint: node watcher.js
+    entrypoint: node BlockchainWatcher/watcher.js
   uport-service:
     image: eth-base
     restart: always
-    entrypoint: node uport.js
+    entrypoint: node UportWebApp/uport.js
  

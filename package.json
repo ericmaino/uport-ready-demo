@@ -11,9 +11,9 @@
     "tests": "npm run build && node ./release/tests.js",
     "gulp": "gulp",
     "lint": "gulp tslint",
-    "start-watcher": "node ./release/watcher.js",
-    "start-producer": "node ./release/producer.js",
-    "start-uport": "node ./release/uport.js",
+    "start-watcher": "node ./release/BlockchainWatcher/watcher.js",
+    "start-producer": "node ./release/ContractSetup/contractSetup.js",
+    "start-uport": "node ./release/UportWebApp/uport.js",
     "validate": "npm ls"
   },
   "author": {
