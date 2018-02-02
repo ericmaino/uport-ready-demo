@@ -4,6 +4,8 @@
     - http://40.84.155.75:8545
 3. Setup NGrok or Expose a port on the VM
     - ngrok http 8081
+    - after ngrok starts, the ngrok app shows what the public DNS name is - using the `https://<dynamicgenerated>.ngrok.io` address later in this getting started.
+    ![](./docs/ngrok-running.jpg)
 4. Build TypeScript and base docker image
     ./build.sh
 5. Deploy registration contract
