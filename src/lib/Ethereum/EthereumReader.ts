@@ -47,9 +47,12 @@ export class EthereumReader implements IEthereumReader {
         }
 
         const balance = await this.baseClient.GetBalance(address.AsHex());
-        data._block = block.BlockNumber();
-        data._address = address.AsHex();
-        data._balance = balance;
+
+        if (abi || balance > 0) {
+            data._block = block.BlockNumber();
+            data._address = address.AsHex();
+            data._balance = balance;
+        }
 
         return data;
     }
@@ -70,8 +73,6 @@ export class EthereumReader implements IEthereumReader {
             if (await this.contractStorage.Exists(abiPath)) {
                 const buffer = await this.contractStorage.ReadItem(abiPath);
                 abi = JSON.parse(buffer);
-            } else {
-                winston.warn(`Unknown ABI for ${code.Hash()}`);
             }
         }
 
