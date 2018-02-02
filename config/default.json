@@ -19,7 +19,7 @@
     "uport" : {
         "callbackRoot" : "https://254e6b49.ngrok.io",
         "app": {
-            "name": "Eric's Demo",
+            "name": "Ready Demo",
             "id": "2oj4NvuUVtPsCJAf3Kb2R9LoEG9p7XLjcmV",
             "secret": "ec3619e8e2ff62f5a1ecab500c97ef606835ab46061a506ecc4ec8bc08e4f263"
         },
