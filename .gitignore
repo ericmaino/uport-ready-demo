@@ -47,3 +47,6 @@
 config/local.json
 test/localAssets
 .data/
+
+# Ignore demo directory by defaulit
+demo/
