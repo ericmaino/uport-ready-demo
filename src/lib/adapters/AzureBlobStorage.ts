@@ -65,6 +65,10 @@ export class AzureBlobStorage implements IStorage {
         });
     }
 
+    public GetPath(itemPath: string): string {
+        return this.AdjustPath(itemPath);
+    }
+    
     private AdjustPath(itemPath: string): string {
         if (this.pathPrefix) {
             itemPath = `${this.pathPrefix}/${itemPath}`;

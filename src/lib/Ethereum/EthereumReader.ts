@@ -47,11 +47,25 @@ export class EthereumReader implements IEthereumReader {
         }
 
         const balance = await this.baseClient.GetBalance(address.AsHex());
-        data._block = block.BlockNumber();
-        data._address = address.AsHex();
-        data._balance = balance;
+
+        if (abi || balance > 0) {
+            data._block = block.BlockNumber();
+            data._address = address.AsHex();
+            data._balance = balance;
+        }
 
         return data;
+    }
+
+    public async GetContractInstance(address: EthereumAddress): Promise<any> {
+        const abi = await this.GetAbi(address);
+        let contract: any = {};
+
+        if (abi) {
+            contract = this.baseClient.GetContractInstance(address.AsHex(), abi);
+        }
+
+        return contract;
     }
 
     public static async GetIdentity(client: IWeb3Adapter): Promise<EthereumIdentity> {
@@ -70,8 +84,6 @@ export class EthereumReader implements IEthereumReader {
             if (await this.contractStorage.Exists(abiPath)) {
                 const buffer = await this.contractStorage.ReadItem(abiPath);
                 abi = JSON.parse(buffer);
-            } else {
-                winston.warn(`Unknown ABI for ${code.Hash()}`);
             }
         }
 

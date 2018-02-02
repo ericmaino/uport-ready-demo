@@ -16,7 +16,7 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
         this.storage = storage;
     }
 
-    public async GetBlock(identifier: number): Promise<any> {
+    public async GetBlock(identifier: any): Promise<any> {
         const block = await this.baseClient.GetBlock(identifier);
         await this.storage.SaveItem(`Blocks/${block.number}/block.json`, JSON.stringify(block));
         return block;
@@ -53,6 +53,10 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
         return code;
     }
 
+    public GetContractInstance(address: string, abi: any): Promise<any> {
+        return this.baseClient.GetContractInstance(address, abi);
+    }
+
     public ReadContract(address: string, abi: any, block?: any): Promise<any> {
         return this.baseClient.ReadContract(address, abi, block);
     }
@@ -75,5 +79,9 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
 
     public async GetBalance(address: string): Promise<number> {
         return this.baseClient.GetBalance(address);
+    }
+
+    public async WaitForTx(txHash: string): Promise<any> {
+        return this.baseClient.WaitForTx(txHash);
     }
 }

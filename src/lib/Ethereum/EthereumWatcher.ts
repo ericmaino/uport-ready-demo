@@ -33,7 +33,7 @@ export class EthereumWatcher {
                 const address = data.addresses[index];
                 const output = await this.eth.GetData(address, block);
 
-                if (output) {
+                if (output._block) {
                     await this.eventBus.SendEvent(output);
                 }
             }

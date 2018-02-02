@@ -1,7 +1,7 @@
 import Web3 = require('web3');
 import net = require('net');
 import winston = require('winston');
-import { JobQueue } from './../../modules';
+import { JobQueue, Task } from './../../modules';
 import { IWeb3Adapter } from './../IWeb3Adapter';
 import { EthereumAddress, EthereumEstimate, EthereumTxInput, EthereumCode } from './../models';
 
@@ -54,6 +54,12 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
         }
 
         return result;
+    }
+
+    public GetContractInstance(address: string, abi: any): Promise<any> {
+        return new Promise<any>((resolve) => {
+            resolve(this.web3.eth.contract(abi).at(address));
+        });
     }
 
     public async ReadContract(address: string, abi: any, block?: any): Promise<any> {
@@ -162,6 +168,21 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
         }));
     }
 
+    public async WaitForTx(txHash: string): Promise<any> {
+        let tx: any;
+
+        while (tx === undefined) {
+            tx = await this.GetTransactionReceipt(txHash);
+
+            if (tx == null) {
+                await Task.Wait(3000);
+                tx = undefined;
+            }
+        }
+
+        return tx;
+    }
+
     public async GetBalance(address: string): Promise<number> {
         return await this.queue.ExecuteJob(async () => new Promise((resolve, reject) => {
             this.web3.eth.getBalance(address, (err, result) => {
@@ -174,5 +195,24 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
                 }
             });
         }));
+    }
+
+    private IsEmpty(obj: any): boolean {
+        // null and undefined are "empty"
+        if (obj == null) { return true; }
+
+        // Assume if it has a length property with a non-zero value
+        // that that property is correct.
+        if (obj.length && obj.length > 0) { return false; }
+        if (obj.length === 0) { return true; }
+
+        // Otherwise, does it have any properties of its own?
+        // Note that this doesn't handle
+        // toString and toValue enumeration bugs in IE < 9
+        for (const key in obj) {
+            return false;
+        }
+
+        return true;
     }
 }

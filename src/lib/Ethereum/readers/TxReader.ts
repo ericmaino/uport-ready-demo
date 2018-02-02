@@ -25,7 +25,6 @@ export class TxReader {
 
     public async ReadTx(): Promise<EthereumTx> {
         const txHash = this.block.GetTransactionHash(this.index);
-        winston.debug(`Reading Tx ${txHash}`);
         return await this.eth.GetTransaction(txHash);
     }
 }

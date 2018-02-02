@@ -12,4 +12,5 @@ export interface IEthereumReader {
     GetTransaction(txHash: string): Promise<EthereumTx>;
     GetTrace(tx: EthereumTx): Promise<IReader<EthereumAddress>>;
     GetData(address: EthereumAddress, block: EthereumBlock): Promise<any>;
+    GetContractInstance(address: EthereumAddress) : Promise<any>;
 }

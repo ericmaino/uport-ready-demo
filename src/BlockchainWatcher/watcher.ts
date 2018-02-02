@@ -1,10 +1,10 @@
 import winston = require('winston');
 
-import * as Adapters from './adapters';
+import * as Adapters from './../lib/adapters';
 
-import { LoggingConfiguration } from './modules';
-import { IWeb3Adapter, Ethereum } from './Ethereum';
-import { IBlockTracker, IIdentifier, INotary, IStorage, IEventBus } from './interfaces';
+import { LoggingConfiguration } from './../lib/modules';
+import { IWeb3Adapter, Ethereum } from './../lib/Ethereum';
+import { IBlockTracker, IIdentifier, INotary, IStorage, IEventBus } from './../lib/interfaces';
 
 import {
     AzureBlobStorage,
@@ -16,7 +16,7 @@ import {
     EventBusGroup,
     ConsoleEventBus,
     AzureServiceBusEventBus
-} from './adapters';
+} from './../lib/adapters';
 
 import util = require('util');
 import config = require('config');
@@ -26,7 +26,7 @@ class Program {
         await Program.WatchChain(config.get('rpcUrl'), config.get('startingBlock'));
     }
 
-    public static async WatchChain(rpcUrl: string, startingBlock: number) {
+    public static async WatchChain(rpcUrl: string, startingBlock: string) {
         LoggingConfiguration.initialize(null);
 
         const storageConfig = config.get('storage');
@@ -38,7 +38,12 @@ class Program {
         const fsCache = new Ethereum.Web3.EthereumWeb3AdapterStorageCache(web3Client, chiainStorage);
         const ethClient = new Ethereum.EthereumReader(fsCache, constractStorage);
 
-        new Ethereum.EthereumWatcher(ethClient, chiainStorage, eventBus, startingBlock)
+        if (startingBlock.length === 0) {
+            startingBlock = 'latest';
+        }
+        const blockNumber = (await fsCache.GetBlock(startingBlock)).number;
+        
+        new Ethereum.EthereumWatcher(ethClient, chiainStorage, eventBus, blockNumber)
             .Monitor()
             .catch(err => winston.error(err));
     }

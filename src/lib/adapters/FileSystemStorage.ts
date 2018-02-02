@@ -51,7 +51,7 @@ export class FileSystemStorage implements IStorage {
         });
     }
 
-    private GetPath(itemPath: string): string {
+    public GetPath(itemPath: string): string {
         return path.join(this.dataRoot, itemPath);
     }
 
