@@ -53,6 +53,10 @@ export class EthereumWeb3AdapterStorageCache implements IWeb3Adapter {
         return code;
     }
 
+    public GetContractInstance(address: string, abi: any): Promise<any> {
+        return this.baseClient.GetContractInstance(address, abi);
+    }
+
     public ReadContract(address: string, abi: any, block?: any): Promise<any> {
         return this.baseClient.ReadContract(address, abi, block);
     }

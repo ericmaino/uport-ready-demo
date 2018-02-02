@@ -56,6 +56,12 @@ export class EthereumWeb3Adapter implements IWeb3Adapter {
         return result;
     }
 
+    public GetContractInstance(address: string, abi: any): Promise<any> {
+        return new Promise<any>((resolve) => {
+            resolve(this.web3.eth.contract(abi).at(address));
+        });
+    }
+
     public async ReadContract(address: string, abi: any, block?: any): Promise<any> {
         if (!block) {
             block = 'latest';

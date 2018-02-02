@@ -57,6 +57,17 @@ export class EthereumReader implements IEthereumReader {
         return data;
     }
 
+    public async GetContractInstance(address: EthereumAddress): Promise<any> {
+        const abi = await this.GetAbi(address);
+        let contract: any = {};
+
+        if (abi) {
+            contract = this.baseClient.GetContractInstance(address.AsHex(), abi);
+        }
+
+        return contract;
+    }
+
     public static async GetIdentity(client: IWeb3Adapter): Promise<EthereumIdentity> {
         const origin = await client.GetBlock(0);
         const networkId = await client.GetNetworkId();
