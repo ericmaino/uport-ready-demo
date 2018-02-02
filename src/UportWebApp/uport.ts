@@ -3,6 +3,7 @@ import winston = require('winston');
 import jsontokens = require('jsontokens');
 import bodyParser = require('body-parser');
 import config = require('config');
+import qr = require('qr-image');
 
 import { LoggingConfiguration, ContractFactory } from './../lib/modules';
 import { UPortFactory } from './../lib/modules/uPort';
@@ -19,9 +20,9 @@ const app = express();
 
 class UI {
     public static GenerateQRCode(res: any, uri: string) {
-        const qrurl = 'http://chart.apis.google.com/chart?cht=qr&chs=400x400&chl=' + encodeURIComponent(uri);
-        winston.info(uri);
-        res.send('<div><img src=' + qrurl + '></img></div>');
+        const code = qr.image(uri, {type : 'svg'});
+        res.type('svg');
+        code.pipe(res);
     }
 }
 
