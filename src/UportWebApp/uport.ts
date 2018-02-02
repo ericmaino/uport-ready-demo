@@ -60,6 +60,8 @@ app.post('/attest', async function (req: any, res: any) {
 });
 
 const server = app.listen(app.get('port'), function () {
-    winston.info("Tutorial app running...");
+    winston.info(`Tutorial app running... Port ${app.get('port')}`);
+    winston.info(`Callback URL: ${uportConfig.rootCallback}`);
+    winston.info(`Contract Address: ${uportConfig.contractAddress}`);
 });
 
